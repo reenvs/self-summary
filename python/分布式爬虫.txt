@@ -1,0 +1,42 @@
+20171204 星期一 分布式爬虫
+
+1、python中把字典（json）格式的字符串转成字典，
+	1.可用eval()：eval(json格式字符串)
+	2.引入，json：json.loads(str)
+
+2、拿出字典的值（可叠加查找）
+	1.dic[key1][key2][key3]，找不到报异常
+	2.dic.get(key1).get(key2)，找不到返回none	
+
+
+今天用到两个新模块：
+
+
+模块一：hashlib中的md5
+------------------------------------------------------------------
+MD5：压缩加密
+
+python用MD5时，用到hashlib库（哈希lib）
+
+m=hashlib.md5       //创建md5对象
+m.update('123456')  //压缩加密m对象	
+m.digest()	    //二进制展示
+m.hexdigest()	    //十六进制展示
+------------------------------------------------------------------
+
+模块二：cPickle（四个方法和json很像）
+------------------------------------------------------------------
+持久性：把数据永久的保存起来，下次使用可以恢复状态。
+序列化：保存状态和加载状态。
+
+1、cPickle.dump(agr1=需要序列化的python对象名称，agr2=本地文件)  //保存在本地文件
+ 	import cPickle
+ 	data = range(1000)
+ 	例如：cPickle.dump(data,open("test\\data.pkl","wb"))
+2、str=cPickle.dumps（agr=python对象） //序列化成str字符串
+	例如：data_string = cPickle.dumps(data)
+3、cPickle.load（agr1=需要序列化的python对象名称，agr2=本地文件）
+	例如：data = cPickle.load(open("test\\data.pkl","rb")) 
+4、cPickle.loads（data_string）
+	例如：data = cPickle.loads(data_string)
+-------------------------------------------------------------------

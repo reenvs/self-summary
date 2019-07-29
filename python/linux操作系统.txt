@@ -1,0 +1,350 @@
+﻿20171114 星期二 阴 Linux操作系统
+
+Ken Thompson 汤普森先写了B语言，为了玩游戏花了一个月时间写了unix（基于B语言）
+随后Dennis Ritchie里奇写了C语言，他以BCPL的第二个字母作为这种语言的名字，这就是C语言
+两个一起又从写了unix。 
+
+Linux虚拟系统的安装：
+    1.先安装虚拟系统软件VMware Workstation
+    2.打开虚拟软件，新建镜像系统（常见的有 ubuntu、redhat）
+	centos多用于服务器，ubuntu应用程序比较好
+	
+windows和linux区别：
+    1.windows区分CDE盘，多个并列的树，
+      而Ubuntu只有一个computer根目录，只有一个树
+    2.命令记不住按tab
+
+---------------------------------------------------------------------------------------------------
+
+linux常用快捷键：
+	根目录 cd /  回自用户 直接cd ；也可以绝对路径cd /home/reenvs/
+	*.ctrl+alt+t----->命令
+	1.cd    回到home，~后接什么目录，则进入什么目录
+	2.cd ..  返回上一目录，有空格
+	3.~     回到home，~后接什么目录，则进入什么目录
+	*.pwd   查看当前目录  ./aaa/ 表示在当前路径下的aaa文件夹
+	4.>     ls -lh > a.txt,可以写入a.txt文件，若不存在则新建
+	5.>>    两个大于号可以追加文件内容	
+	6.cat   查看文件可以先找到文件，用cat 文件名
+	7.ls -alh|more  所有文件“分屏显示” （a所有，l详细信息，h人性化）
+	8.cd/cd / 根目录下的cd要加斜杠，其他是相对路径不需要
+	9.mkdir a 创建目录
+	10.mkdir  a\b\c -p  递归创建多个嵌套目录
+	11.rmdir  a 删除目录，目录必须没运行而且为空
+	12.rm     删除文件
+	   rm     删除目录时，要接参数，rm 目录名 循环删除-r(递归) 强制删除-f
+	13.sh ./xxx.sh 安装文件,解压软件，找到软件根目录，运行命令
+
+====================================================================================================
+20171115 星期三  继续学习Linux常用命令
+
+	14.touch 文件名 创建文件
+	15.vi 打开文件，i开始编写文件
+	16.esc停止编写文件   :q 不保存退出  :wq 保存退出（注意：中文模式下：不能退出）
+	17.软连接(ln -s 原文件 连接文件,如:ln -s x.py xxx)，不占空间，删了原文件链接文件不可用
+	   连接文件可以使用绝对路径，即从根目录开始，但是原文件此时也要用绝对路径，因为不在一个
+	   路径，默认的相对路径下找同文件夹下文件，找不到，如：
+		/home/reenvs/ln -s x.py /home/reenvs/Desktop/xxx	
+	18.硬连接(ln 原文件 连接文件，如:ln x.py xxx)占用空间，相当于拷贝，删除源文件，依旧可以用 
+	19.合并文件（cat s.py x.py >sx.py）
+	20.获取字符 grep '1' d.py
+	21.运用正则匹配查找文件 
+		find ./ -name s.py          	查找当前目录名叫 s.py的文件
+		find ./ -size 2M/+2M/-2M	查找当前目录下大小 等于/大于/小于 2M的文件
+		find /home -size +100k -size -2M 	查找home目录下大小在 100k到2M 的文件   	
+		find /home -name '*.sh'		查找home目录下.sh后缀的文件
+		find /home -name '[A-Z]*' 	查找home目录下以大写字母开头的文件
+	22.复制文件，cp a.py a/ ，把a.py拷贝到a文件夹中
+		     cp a/ b/ -irv ,把a目录包括子文件复制到b目录中
+	23.移动文件，mv a/ b/      ,把a目录包括子文件移动到b目录中，等于‘剪切’
+	24.归档，tar -cvf 200.tar a/ b/ a.py b.py
+	25.解档，tar -xf 200.tar
+	26.压缩，gzip -r 200.tar 200.tar.gz
+	27.解压，gzip -d 200.tar.gz
+	28.归档+压缩，tar -zcvf 200.tar.gz a/ b/ a.py b.py
+	29.解压+解档，tar -zxvf 200.tar.gz
+	30.指定目录，用到大写字母C 
+		tar -zxvf 200.tar.gz -C 20171114/ 解压到当前目录下的20171114文件夹下
+	31.gz2格式，tar -jcvf 100.tar.gz2 * （-j对应gz2，*表示当前目录下所有文件）
+	32.zip格式，压缩：zip d a/ a.py （zip格式后缀默认为zip不需要 d为压缩后文件名 后跟要压缩的文件）
+		    	  zip d *.*   （*.*表示把所有带点格式的，即有后缀名的文件压缩）
+		    解压：unzip -d aa d.zip，aa为当前目录下的文件夹，没有的话自动创建
+			  unzip -d ./ d.zip  解压到当前目录
+	33.which ls，查看ls命令的所在目录
+
+    用户名和管理员：
+	1.whoami，可以查看当前用户
+	2.su，提示输入密码，即root密码，输入成功可以进入root管理员
+	3.如果首次登陆root，无密码
+	4.sudo passwd，可以提示输入root密码，正常输入看不见
+	5.exit，退出当前用户（切换之前的用户，如果没有切换用户，则退出终端）
+	6.普通用后后为$，root后跟的则是#，root权限无限制
+
+	7.who，查看当前用户
+	8.新建用户，useradd -d /home/qq qq -m  //第一个qq指的是home下的文件夹没有的话自动创建，
+			第二个qq是用户名，并且自动创建了qq组
+		    useradd -d /home/qq qq -g qq -m
+			第三个qq是qq组，如果没创建则提示不存在qq组，已创建的用户自动创建好了组，可写
+	9.用户密码，8中创建的用户现在没有密码，可以在root超级管理员设置密码
+		1.su，输入root密码后可以进入root用户
+		2.passwd qq，输入qq用户密码，若已存在密码，则更新
+	10.删除用户，userdel 用户名：删除用户名，但不会删除用户名主目录
+		     userdel 用户名 -r：删除用户名和用户名主目录
+	11.su 用户名，可以切换用户；
+	   su -，切换用户后自动切换到当前主目录
+	12.sudo，在命令权限不够的时候，前面加sudo，可以在不用切换到root的时候，而权限允许
+	13.创建用户组，root下 groupadd abc，创建abc组，或者在命令前加sudo
+	14.删除用户组，root下 groupdel abc，删除abc组，或者在命令前加sudo
+	15.权限修改，
+	    1.字母法，chmod (u/g/o)(+/-/=)(r/w/x) 文件名 
+		      输入 ls -lh 我们查到下面这段信息：
+			reenvs@ubuntu:~$ ls -lh
+			total 60K
+			drwxr-xr-x 5 reenvs reenvs 4.0K Nov 14 19:50 Desktop
+			drwxr-xr-x 2 reenvs reenvs 4.0K Nov 13 19:55 Documents
+			drwxr-xr-x 3 reenvs reenvs 4.0K Nov 14 16:47 Downloads
+			-rw-rw-r-- 1 reenvs reenvs    8 Nov 14 18:04 d.py
+			-rw-rw-r-- 1 reenvs reenvs   20 Nov 14 18:05 ds.py
+			-rw-r--r-- 1 reenvs reenvs 8.8K Nov 14 02:52 examples.desktop
+			drwxr-xr-x 2 reenvs reenvs 4.0K Nov 13 19:55 Music
+			drwxr-xr-x 2 reenvs reenvs 4.0K Nov 13 19:55 Pictures
+	    		这是查出来的一段信息，上面信息中：
+				1.d开头表示文件夹，-开头表示文件
+				2.rwx，分别表示 读、写、执行 的权限
+				3.drwxr-xr-x中，第一个drwxr的位置 表示当前用户权限（u）
+				    第二个xr 表示当前用户同组的用户   （g）
+				    第三个x  表示其他用户		  （o）
+	                   	    所有用户			  （a）
+
+				    第一个reenvs是用户名
+				    第二个reenvs是组名
+
+				4.可以用+/-/=给每个级别用户修改权限，操作d.py文件
+
+		    我们查到d.py信息为：-rw-rw-r-- 1 reenvs reenvs    8 Nov 14 18:04 d.py
+			1.chmod u+x d.py   ------>-rwx-rw-r--  当前用户加上执行权限
+			2.chomd g=rwx d.py ------>-rwx-rwx-r-- 组权限为读写执行
+		    	3.chomd o+x d.py   ------>-rwx-rwx-rx--其他用户加上执行权限
+			4.chomd g-x d.py   ------>-rwx-rw-rx-- 组去掉执行权限
+			5.chomd a=rw d.py  ------>-rw-rw-wr--  都改为读写权限
+	   2.数字法，
+		----chmod 777 d.py ---->-rwx-rwx-rwx--全部给最大权限
+		r--读的权限，数字4
+		w--写的权限，数字2
+		x--执行权限，数字1
+		     无权限，数字0
+		通过三个数字的任意组合，可以形成各个不同权限
+
+		777，第一个数字代表当前用户权限
+		     第二个数字代表组权限		
+		     第三个数字代表其他用户权限
+		如：-rwx-rw-r--可以通过，chmod 764 d.py 这样定义
+					
+	   3.前面两个修改单个文件，若要将目录下面的文件递归修改成相同权限，用到-R
+		如：chmod 777 aa/ -R ，可能无权限，前面加sudo			
+		
+	16.修改文件所属用户，chown 用户名 文件名，可能没有权限，sudo或者切换到root
+	17.修改文件所属组，  chgrp 组名   文件名
+	       我们查到d.py信息为：-rw-rw-r-- 1 reenvs reenvs  8 Nov 14 18:04 d.py
+
+---------------------------------------------------------------------------------------------
+
+	1.cal，查看日历
+	       cal>a.txt，可以把日历写进a.txt中，如果没有该txt，则创建
+	2.date，查看日期+时间	   
+
+=============================================================================================
+20171116 星期四 编辑器
+
+一、vim操作
+    按Esc进入命令模式：
+	1.X删除前面 x删除后面
+	2.u撤销 
+	3.I行首 i光标前 	
+	4.A行末 a光标后
+	5.dd删除一行 ；ndd，n是几就删除几行，比如2dd，删除两行
+	6.yy复制一行 ；nyy，n是几就复制几行，比如2yy，复制两行，p粘贴
+	7.o插入到下一行；O插入到上一行
+	8.ikjl代表上下左右
+	9.d0删除本行光标之前；dw删除光标之后，包含光标	
+	10.shift+>>整体右移；shift+<<整体左移
+	11./str，可以查到字符，比如/a，从光标后开始搜索a
+	12.上面查到的字符，n下一个，N上一个
+
+---------------------------------------------------------------------------------------------
+服务器
+
+一、更新Ubuntu软件下载地址（默认国外ubuntu网站，链接速度慢）
+
+    1.寻找国内镜像源：所谓的镜像源：可以理解为提供下载软件的地方，比如Android手机上可以
+		      下载软件的91手机助手；iOS手机上可以下载软件的AppStore
+	  a.清华大学TUNA镜像源：https://mirrors.tuna.tsinghua.edu.cn
+	  b.找到ubuntu，点击后面问号
+	  c.选择对应的版本，复制下面连接文本
+
+    2.找到默认源地址文件：
+	  a.绝对路径：cd /etc/apt
+	  b.ls 可以查到有一个sources.list文件
+	  c.备份ubuntu源地址文件，即复制该文件到一个指定目录
+	  d.sudo gedit sources.list,以root权限进入
+
+    3.把步骤1中复制到的连接文本覆盖掉ubuntu的地址文本，保存完成
+	
+    4.更新源，sudo apt-get update
+	  做完此步骤之后，就可以进行apt-get install 下载了
+
+二、软件操作相关命令
+    	1.更新源，sudo apt-get update 
+	2.安装软件，sudo apt-get install package （package就是软件名称）
+	3.删除软件，sudo apt-get remove package
+	4.搜索软件，sudo apt-cache search package
+	5.获取信息，sudo apt-cache show package
+	
+	sudo apt-get install package --reinstall   重新安装包
+	sudo apt-get -f install   修复安装
+	sudo apt-get remove package --purge 删除包，包括配置文件等
+	sudo apt-get build-dep package 安装相关的编译环境
+	sudo apt-get upgrade 更新已安装的包
+	sudo apt-get dist-upgrade 升级系统
+	sudo apt-cache depends package 了解使用该包依赖那些包
+	sudo apt-cache rdepends package 查看该包被哪些包依赖
+	sudo apt-get source package  下载该包的源代码
+	sudo apt-get clean && sudo apt-get autoclean 清理无用的包
+	sudo apt-get check 检查是否有损坏的依赖
+
+三、Linux常用服务器构建-------SSH
+
+	介绍：ssh，secure shell 的缩写，建立在应用层和传输层的基础安全协议
+	作用：远程登录、用户之间资料拷贝
+
+	使用：分为服务端和客户端，若A用户被B用户控制，则A用户安装服务端，
+		  B用户安装客户端
+	
+	安装：
+		1.安装命令：sudo apt-get install openssh-server
+		2.远程登录：ssh 用户名@IP
+			    使用ssh访问，如访问出现错误。可查看是否有该文件
+			     ～/.ssh/known_ssh 尝试删除该文件解决。
+		3.使用ssh连接服务器
+		  SSH 告知用户，这个主机不能识别，这时键入"yes"，SSH 就会将相关信息，
+		  写入" ~/.ssh/know_hosts" 中，再次访问，就不会有这些信息了。然后输
+		  入完口令,就可以登录到主机了。
+
+=====================================================================================
+20171117 星期五 小雨			
+ 
+程序：代码写成的软件
+进程：正在运行的程序
+线程：进程里面可以独立执行的单元，依附于进程
+多线程：进程里面包括多个独立的线程，所有的web项目都是多线程
+
+比如： 	qq音乐属于一个程序
+	运行qq音乐就有了一个qq音乐进程
+	qq音乐里面的播放歌曲、添加喜欢、搜索歌曲...都是线程
+
+
+=============================================================================
+20171120 星期一  爬虫应用
+
+创建线程的方法:函数和类
+
+    1、函数式：调用thread模块中的start_new_thread（）函数产生新线程
+	       thread.start_new_thread ( function, args[，kwargs] )
+	  说明：1.第一个thread为import的thread模块
+		2.function为前面定义的函数
+		3.args为函数传的参数，所有参数在一个元组中，tuple类型
+		4.kwargs为可选参数
+	  注意：当运行程序不执行时，可能是主线程已经执行完了，可以在后面加一个
+		whlie 1：
+		     pass
+		死循环，目的是让主线程继续运行，保证子程序运行结束
+	
+    2、Thread类：Thread类提供了以下方法：
+	1.run():          表示线程活动的方法
+	2.start():        启动线程活动
+	3.join([time]):  等待至线程中止。
+	4.isAlive():     返回线程是否活动的。
+	5.getName():     返回线程名。
+ 	6.setName():     设置线程名。
+
+    3、使用Threading模块创建线程，直接从threading.Thread继承，然后重写__init__方法和run方法：
+--------------------------------------------------------------------------
+#-*-coding=utf-8-*-
+import threading
+import time
+
+t=5
+class Thread(threading.Thread):
+	def __init__(self,name,n,lock):
+		threading.Thread.__init__(self)
+		self.name=name
+		self.n=n
+		self.lock=lock
+
+	#重写run方法
+	def run(self):
+	    global t
+	    for i in range(self.n):
+		#给判断条件上锁，当前线程解除锁后其他线程方可进入
+		self.lock.acquire()
+		if t>0:
+		    time.sleep(2)	
+		    t=t-1
+		    print self.name+"买了1张票，还剩"+str(t)+"张票"
+		else:
+		    print "余票为："+str(t)+"张"
+		#释放锁
+		self.lock.release()
+
+#定义锁
+lock=threading.RLock()
+t1=Thread("张三",3,lock)
+t2=Thread("李四",4,lock)
+#启动线程
+t1.start()
+t2.start()
+		
+------------------------------------------------------------------------------
+线程同步：多线程在共享数据时，可能会同时拿到数据修改或输出，产生不一样的结果。
+	  使用Thread对象的Lock和Rlock可以实现简单的线程同步，这两个对象都有
+    acquire方法和release方法，对于那些需要每次只允许一个线程操作的数据，可以
+    将其操作放到acquire和release方法之间。
+
+python线程中的锁lock和rlock的区别：
+	1、lock锁两次以上形成死锁，lock.acquire()和lock.release()
+	2、rlock只有成对出现，可以锁很多次
+
+------------------------------------------------------------------------------
+python GIL 全局锁：可以实现多线程
+	1、当进行IO操作时，线程切换
+	2、当一个线程连续执行了一定数量的指令时，会出现线程切换
+
+IO密集：多线程，IO操作、计数机达到指定值，切换线程
+------------------------------------------------------------------------------
+CPU密集：多进程
+     	
+	1.os.fork:
+		相当于拷贝父进程，Unix/Linux
+	  	  	os.getpid()获取当前进程id
+	  	  	os.getppid（）获取当前进程的父进程
+	2.multiprocessing：
+		跨平台，手动用“Process类”添加进程，当成百上千个进程时，
+		此方法就过于繁琐，于是出现了进程池。
+	3.进程池
+		进程池“Pool类”也是multiprocessing的一个类
+
+==================================================================================
+
+20171121 星期二 
+
+分布式进程：把Process进程分布到多台机器上，充分利用各个计算机的性能完成复杂任务。
+	    应用：爬虫开发。
+
+协程：可以免去多进程切换CPU的消耗，程序员通过一段代码实现多个任务同时进行。
+
+多线程、多进程、协程----->应用于并发执行的任务
+
+
+
+
+

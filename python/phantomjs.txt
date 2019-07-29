@@ -1,0 +1,57 @@
+20171208 星期五 phantomjs
+
+一、phantomjs介绍
+
+     （1）一个基于webkit内核的无头浏览器，即没有UI界面，即它就是一个浏览器，只是其内的点击、翻页等人为相关操作需要程序设计实现。
+
+     （2）提供javascript API接口，即通过编写js程序可以直接与webkit内核交互，在此之上可以结合java语言等，通过java调用js等相关操作，从而解决了以前c/c++才能比较好的基于webkit开发优质采集器的限制。
+
+（1）常用内置几大对象
+	
+    1、var system=require('system');   
+	 //获得系统操作对象，包括命令行参数、phantomjs系统设置等信息
+
+    2、var page = require('webpage');   
+	//获取操作dom或web网页的对象，通过它可以打开网页、接收网页内容、request、response参	数，其为最核心对象。
+
+    3、var fs = require('fs');   
+	//获取文件系统对象，通过它可以操作操作系统的文件操作，包括read、write、move、copy、	delete等。
+
+      (2) 常用API
+	
+    1、page.open(url,function (status) {}   
+	//通过page对象打开url链接，并可以回调其声明的回调函数，其回调发生的时机为该URL被彻底打开完毕，即该URL所引发的请求项被全部加载完，但ajax请求是与它的加载完成与否没有关系
+
+    2、page.onLoadStarted = function() {}
+	//当page.open调用时，回首先执行该函数，在此可以预置一些参数或函数，用于后边的回调函数中
+
+    3、page.onResourceError = function(resourceError) {} 
+	//page的所要加载的资源在加载过程中，出现了各种失败，则在此回调处理
+
+    4、page.onResourceRequested = function(requestData, networkRequest) {} 
+	//page的所要加载的资源在发起请求时，都可以回调该函数
+
+    5、page.onResourceReceived = function(response) {} 
+	//page的所要加载的资源在加载过程中，每加载一个相关资源，都会在此先做出响应，它相当于http头部分,  其核心回调对象为response，可以在此获取本次请求的cookies、userAgent等
+
+    6、page.onConsoleMessage = function (msg) {}
+	//欲在执行web网页时，打印一些输出信息到控制台，则可以在此回调显示。
+
+    7、page.onAlert = function(msg) {} 
+	//phantomjs是没有界面的，所以对alert也是无法直接弹出的，故phantomjs以该函数回调在page在执行过程中的alert事件
+
+    8、page.onError = function(msg, trace) {} 
+	//当page.open中的url，它自己（不包括所引起的其它的加载资源）出现了异常，如404、no route to web site等，都会在此回调显示。
+
+    9、page.onUrlChanged = function(targetUrl) {} 
+	// 当page.open打开的url或是该url在打开过程中基于该URL进行了跳转，则可在此函数中回调
+
+    10、page.onLoadFinished = function(status){}  
+	// 当page.open的目标URL被真正打开后，会在调用open的回调函数前调用该函数，在此可以进行内部的翻页等操作
+
+    11、page.evaluate(function(){});
+	// 在所加载的web page内部执行该函数，像翻页、点击、滑动等，均可在此中执行
+
+    12、page.render("");
+	//将当前page的现状渲染成图片，输出到指定的文件中去。
+

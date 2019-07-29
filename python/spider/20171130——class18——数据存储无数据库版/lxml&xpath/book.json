@@ -1,0 +1,382 @@
+[
+    {
+        "book_title": "盗墓笔记1七星鲁王宫", 
+        "chapters": [
+            {
+                "date": "2012-5-19 3:3:52", 
+                "href": "http://seputu.com/biji1/1.html", 
+                "real_title": "七星鲁王 第一章 血尸"
+            }, 
+            {
+                "date": "2012-5-19 3:5:22", 
+                "href": "http://seputu.com/biji1/2.html", 
+                "real_title": "七星鲁王 第二章 五十年后"
+            }, 
+            {
+                "date": "2012-5-19 3:6:15", 
+                "href": "http://seputu.com/biji1/3.html", 
+                "real_title": "七星鲁王 第三章 瓜子庙"
+            }, 
+            {
+                "date": "2012-5-19 3:30:57", 
+                "href": "http://seputu.com/biji1/4.html", 
+                "real_title": "七星鲁王 第四章 尸洞"
+            }, 
+            {
+                "date": "2012-5-19 4:52:12", 
+                "href": "http://seputu.com/biji1/5.html", 
+                "real_title": "七星鲁王 第五章 水影"
+            }, 
+            {
+                "date": "2012-5-19 4:53:14", 
+                "href": "http://seputu.com/biji1/6.html", 
+                "real_title": "七星鲁王 第六章 积尸地"
+            }, 
+            {
+                "date": "2012-5-22 14:42:52", 
+                "href": "http://seputu.com/biji1/7.html", 
+                "real_title": "七星鲁王 第七章 一百多个人头"
+            }, 
+            {
+                "date": "2012-5-22 14:43:24", 
+                "href": "http://seputu.com/biji1/8.html", 
+                "real_title": "七星鲁王 第八章 山谷"
+            }, 
+            {
+                "date": "2012-5-22 14:44:0", 
+                "href": "http://seputu.com/biji1/9.html", 
+                "real_title": "七星鲁王 第九章 古墓"
+            }, 
+            {
+                "date": "2012-5-22 14:44:35", 
+                "href": "http://seputu.com/biji1/10.html", 
+                "real_title": "七星鲁王 第十章 影子"
+            }, 
+            {
+                "date": "2012-5-22 14:45:8", 
+                "href": "http://seputu.com/biji1/11.html", 
+                "real_title": "七星鲁王 第十一章 七星棺"
+            }, 
+            {
+                "date": "2012-5-22 14:45:44", 
+                "href": "http://seputu.com/biji1/12.html", 
+                "real_title": "七星鲁王 第十二章 门"
+            }, 
+            {
+                "date": "2012-5-22 14:46:15", 
+                "href": "http://seputu.com/biji1/13.html", 
+                "real_title": "七星鲁王 第十三章 02200059"
+            }, 
+            {
+                "date": "2012-5-22 14:47:26", 
+                "href": "http://seputu.com/biji1/14.html", 
+                "real_title": "七星鲁王 第十四章 闷油瓶"
+            }, 
+            {
+                "date": "2012-5-22 14:47:55", 
+                "href": "http://seputu.com/biji1/15.html", 
+                "real_title": "七星鲁王 第十五章 屁"
+            }, 
+            {
+                "date": "2012-5-22 14:48:32", 
+                "href": "http://seputu.com/biji1/16.html", 
+                "real_title": "七星鲁王 第十六章 小手"
+            }, 
+            {
+                "date": "2012-5-22 14:49:5", 
+                "href": "http://seputu.com/biji1/17.html", 
+                "real_title": "七星鲁王 第十七章 洞"
+            }, 
+            {
+                "date": "2012-5-22 14:49:59", 
+                "href": "http://seputu.com/biji1/18.html", 
+                "real_title": "七星鲁王 第十八章 大树"
+            }, 
+            {
+                "date": "2012-5-22 14:50:30", 
+                "href": "http://seputu.com/biji1/19.html", 
+                "real_title": "七星鲁王 第十九章 女尸"
+            }, 
+            {
+                "date": "2012-5-22 14:50:52", 
+                "href": "http://seputu.com/biji1/20.html", 
+                "real_title": "七星鲁王 第二十章 钥匙"
+            }, 
+            {
+                "date": "2012-5-22 14:51:25", 
+                "href": "http://seputu.com/biji1/21.html", 
+                "real_title": "七星鲁王 第二十一章 青眼狐尸"
+            }, 
+            {
+                "date": "2012-5-22 14:52:4", 
+                "href": "http://seputu.com/biji1/22.html", 
+                "real_title": "七星鲁王 第二十二章 八重宝函"
+            }, 
+            {
+                "date": "2012-5-22 14:52:51", 
+                "href": "http://seputu.com/biji1/23.html", 
+                "real_title": "七星鲁王 第二十三章 棺椁"
+            }, 
+            {
+                "date": "2012-5-22 14:54:31", 
+                "href": "http://seputu.com/biji1/24.html", 
+                "real_title": "七星鲁王 第二十四章 活尸"
+            }, 
+            {
+                "date": "2012-5-22 14:54:54", 
+                "href": "http://seputu.com/biji1/25.html", 
+                "real_title": "七星鲁王 第二十五章 玉俑"
+            }, 
+            {
+                "date": "2012-5-22 14:55:47", 
+                "href": "http://seputu.com/biji1/26.html", 
+                "real_title": "七星鲁王 第二十六章 紫玉匣子"
+            }, 
+            {
+                "date": "2012-5-22 14:56:22", 
+                "href": "http://seputu.com/biji1/27.html", 
+                "real_title": "七星鲁王 第二十七章 谎言"
+            }, 
+            {
+                "date": "2012-5-22 14:56:49", 
+                "href": "http://seputu.com/biji1/28.html", 
+                "real_title": "七星鲁王 第二十八章 火"
+            }, 
+            {
+                "date": "2012-5-22 14:57:29", 
+                "href": "http://seputu.com/biji1/29.html", 
+                "real_title": "七星鲁王 第二十九章 紫金匣"
+            }, 
+            {
+                "date": "2012-5-22 14:58:3", 
+                "href": "http://seputu.com/biji1/30.html", 
+                "real_title": "怒海潜沙 第一章 蛇眉铜鱼"
+            }, 
+            {
+                "date": "2012-5-22 14:58:37", 
+                "href": "http://seputu.com/biji1/31.html", 
+                "real_title": "怒海潜沙 第二章 双层墓墙"
+            }, 
+            {
+                "date": "2012-5-22 14:59:18", 
+                "href": "http://seputu.com/biji1/32.html", 
+                "real_title": "怒海潜沙 第三章 大风暴"
+            }, 
+            {
+                "date": "2012-5-22 14:59:39", 
+                "href": "http://seputu.com/biji1/33.html", 
+                "real_title": "怒海潜沙 第四章 海鬼"
+            }, 
+            {
+                "date": "2012-5-22 15:0:28", 
+                "href": "http://seputu.com/biji1/34.html", 
+                "real_title": "怒海潜沙 第五章 老照片"
+            }, 
+            {
+                "date": "2012-5-22 15:0:52", 
+                "href": "http://seputu.com/biji1/35.html", 
+                "real_title": "怒海潜沙 第六章 海南"
+            }, 
+            {
+                "date": "2012-5-22 15:1:30", 
+                "href": "http://seputu.com/biji1/36.html", 
+                "real_title": "怒海潜沙 第七章 女人"
+            }, 
+            {
+                "date": "2012-5-22 15:2:12", 
+                "href": "http://seputu.com/biji1/37.html", 
+                "real_title": "怒海潜沙 第八章 变天了"
+            }, 
+            {
+                "date": "2012-5-22 15:2:38", 
+                "href": "http://seputu.com/biji1/38.html", 
+                "real_title": "怒海潜沙 第九章 鬼船"
+            }, 
+            {
+                "date": "2012-5-22 15:3:15", 
+                "href": "http://seputu.com/biji1/39.html", 
+                "real_title": "怒海潜沙 第十章 枯手"
+            }, 
+            {
+                "date": "2012-5-22 15:3:50", 
+                "href": "http://seputu.com/biji1/40.html", 
+                "real_title": "怒海潜沙 第十一章 甲板"
+            }, 
+            {
+                "date": "2012-5-22 15:5:29", 
+                "href": "http://seputu.com/biji1/41.html", 
+                "real_title": "怒海潜沙 第十二章 三叔的谎言"
+            }, 
+            {
+                "date": "2012-5-22 15:5:53", 
+                "href": "http://seputu.com/biji1/42.html", 
+                "real_title": "怒海潜沙 第十三章 海猴子"
+            }, 
+            {
+                "date": "2012-5-22 15:6:26", 
+                "href": "http://seputu.com/biji1/43.html", 
+                "real_title": "怒海潜沙 第十四章 永兴岛"
+            }, 
+            {
+                "date": "2012-5-22 15:7:12", 
+                "href": "http://seputu.com/biji1/44.html", 
+                "real_title": "怒海潜沙 第十五章 胖子"
+            }, 
+            {
+                "date": "2012-5-22 15:7:38", 
+                "href": "http://seputu.com/biji1/45.html", 
+                "real_title": "怒海潜沙 第十六章 开会"
+            }, 
+            {
+                "date": "2012-5-22 15:8:27", 
+                "href": "http://seputu.com/biji1/46.html", 
+                "real_title": "怒海潜沙 第十七章 头发"
+            }, 
+            {
+                "date": "2012-5-22 15:9:0", 
+                "href": "http://seputu.com/biji1/47.html", 
+                "real_title": "怒海潜沙 第十八章 大量头发"
+            }, 
+            {
+                "date": "2012-5-22 15:9:38", 
+                "href": "http://seputu.com/biji1/48.html", 
+                "real_title": "怒海潜沙 第十九章 大瓷罐"
+            }, 
+            {
+                "date": "2012-5-22 15:10:3", 
+                "href": "http://seputu.com/biji1/49.html", 
+                "real_title": "怒海潜沙 第二十章 甬道"
+            }, 
+            {
+                "date": "2012-5-22 15:10:41", 
+                "href": "http://seputu.com/biji1/50.html", 
+                "real_title": "怒海潜沙 第二十一章 箭"
+            }, 
+            {
+                "date": "2012-5-22 15:11:20", 
+                "href": "http://seputu.com/biji1/51.html", 
+                "real_title": "怒海潜沙 第二十二章 第一次解迷"
+            }, 
+            {
+                "date": "2012-5-22 15:11:44", 
+                "href": "http://seputu.com/biji1/52.html", 
+                "real_title": "怒海潜沙 第二十三章 继续解迷"
+            }, 
+            {
+                "date": "2012-5-22 15:12:23", 
+                "href": "http://seputu.com/biji1/53.html", 
+                "real_title": "怒海潜沙 第二十四章 开棺"
+            }, 
+            {
+                "date": "2012-5-22 15:12:56", 
+                "href": "http://seputu.com/biji1/54.html", 
+                "real_title": "怒海潜沙 第二十五章 一个人"
+            }, 
+            {
+                "date": "2012-5-22 15:13:19", 
+                "href": "http://seputu.com/biji1/55.html", 
+                "real_title": "怒海潜沙 第二十六章 瓷画"
+            }, 
+            {
+                "date": "2012-5-22 15:14:3", 
+                "href": "http://seputu.com/biji1/56.html", 
+                "real_title": "怒海潜沙 第二十七章 无题"
+            }, 
+            {
+                "date": "2012-5-22 15:14:43", 
+                "href": "http://seputu.com/biji1/57.html", 
+                "real_title": "怒海潜沙 第二十八章 继续无题"
+            }, 
+            {
+                "date": "2012-5-22 15:15:13", 
+                "href": "http://seputu.com/biji1/58.html", 
+                "real_title": "怒海潜沙 第二十九章 石碑"
+            }, 
+            {
+                "date": "2012-5-22 15:15:47", 
+                "href": "http://seputu.com/biji1/59.html", 
+                "real_title": "怒海潜沙 第三十章 池底"
+            }, 
+            {
+                "date": "2012-5-22 15:16:17", 
+                "href": "http://seputu.com/biji1/60.html", 
+                "real_title": "怒海潜沙 第三十一章 二十年前"
+            }, 
+            {
+                "date": "2012-5-22 15:16:53", 
+                "href": "http://seputu.com/biji1/61.html", 
+                "real_title": "怒海潜沙 第三十二章 奇门遁甲"
+            }, 
+            {
+                "date": "2012-5-22 15:17:40", 
+                "href": "http://seputu.com/biji1/62.html", 
+                "real_title": "怒海潜沙 第三十三章 生门"
+            }, 
+            {
+                "date": "2012-5-22 15:18:27", 
+                "href": "http://seputu.com/biji1/63.html", 
+                "real_title": "怒海潜沙 第三十四章 连环"
+            }, 
+            {
+                "date": "2012-5-22 15:18:53", 
+                "href": "http://seputu.com/biji1/64.html", 
+                "real_title": "怒海潜沙 第三十五章 血字"
+            }, 
+            {
+                "date": "2012-5-22 15:19:34", 
+                "href": "http://seputu.com/biji1/65.html", 
+                "real_title": "怒海潜沙 第三十六章 脱困"
+            }, 
+            {
+                "date": "2012-5-22 15:20:4", 
+                "href": "http://seputu.com/biji1/66.html", 
+                "real_title": "怒海潜沙 第三十七章 盗洞"
+            }, 
+            {
+                "date": "2012-5-22 15:20:28", 
+                "href": "http://seputu.com/biji1/67.html", 
+                "real_title": "怒海潜沙 第三十八章 禁婆"
+            }, 
+            {
+                "date": "2012-5-22 15:21:5", 
+                "href": "http://seputu.com/biji1/68.html", 
+                "real_title": "怒海潜沙 第三十九章 混战"
+            }, 
+            {
+                "date": "2012-5-22 15:21:34", 
+                "href": "http://seputu.com/biji1/69.html", 
+                "real_title": "怒海潜沙 第四十章 墙洞"
+            }, 
+            {
+                "date": "2012-5-22 15:22:8", 
+                "href": "http://seputu.com/biji1/70.html", 
+                "real_title": "怒海潜沙 第四十一章 珊瑚树"
+            }, 
+            {
+                "date": "2012-5-22 21:6:19", 
+                "href": "http://seputu.com/biji1/71.html", 
+                "real_title": "怒海潜沙 第四十二章 困境"
+            }, 
+            {
+                "date": "2012-5-22 21:6:59", 
+                "href": "http://seputu.com/biji1/72.html", 
+                "real_title": "怒海潜沙 第四十三章 炸弹"
+            }, 
+            {
+                "date": "2012-5-22 21:7:33", 
+                "href": "http://seputu.com/biji1/73.html", 
+                "real_title": "怒海潜沙 第四十四章 脱皮"
+            }, 
+            {
+                "date": "2012-5-22 21:8:23", 
+                "href": "http://seputu.com/biji1/74.html", 
+                "real_title": "怒海潜沙 第四十五章 脱出"
+            }, 
+            {
+                "date": "2012-5-22 21:8:56", 
+                "href": "http://seputu.com/biji1/75.html", 
+                "real_title": "怒海潜沙 第四十六章 总结"
+            }
+        ]
+    }
+]

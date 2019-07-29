@@ -1,0 +1,5 @@
+#-*-coding:utf-8-*-
+import requests
+
+r=requests.get("http://www.xicidaili.com/nn/1")
+print r.content.decode("utf-8")

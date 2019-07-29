@@ -1,0 +1,126 @@
+
+1.装bs库（beautifulsoup：方便爬虫抓取数据的库）
+	反复执行很多次无效，删除Python/lib/site-packages/目录下的bs4和beautifulsoup4-4.3.2-    py2.7.egg-info，再安装，成功！
+
+2.爬取网页信息
+    问题1：
+	想把爬取到的网页信息响应到其他网页上，发现传过去的列表不能遍历，出现很多空列表
+    解决：
+	遍历后台views中的datas（提取到的数据列表）发现，列表中的元素不是str类型，而是
+        bs4.element.Tag类型，把列表元素类型转为str类型，传到网页可以遍历。 
+    问题2：
+	当截取图片时，遍历到网页中的img标签元素没有直接转化为图片
+    解决：
+	可以拿到img标签的src属性，传到网页，再遍历到src属性，传到网页后创建img标签，src属性		遍历响应数据可得
+	img.attrs.get("src") 或者 img.attrs["src"] 
+	两者区别：get如果不存在返回none，[""]如果不存在返回异常
+	注意：src属性可能是data-src，有这种情况要先做判断
+	      	imgs=[]
+	      	if img.attrs.get("src")!=None:
+			imgs.append(str(img.attrs.get("src")))
+		else:
+			imgs.append(str(img.attrs.get("data-src")))
+
+3.python库的常规安装和pip安装
+	常规安装：下载好库后，cmd中进入到该库目录中，运行：
+		python setup.py install
+	pip安装：在线安装，在cmd中进入到Python目录的script中，运行：
+		pip install 库名
+	说明：pip本身是python的一个库文件，用常规方法安装，pip需要配置环境变量：
+		C:\Pythonx.x\Scripts;
+
+    pip命令：
+	1.pip list 
+		列出所有已安装的库
+	2.pip list --outdated 
+		列出所有过期的库（比较慢）
+	3.pip install --upgrade 库名==版本号
+		更新某个库
+	4.import pip 
+	  from subprocess import call 
+	  for dist in pip.get_installed_distributions(): 
+    		call("pip install --upgrade " + dist.project_name, shell=True)
+		批量更新库
+	5.pip show lxml
+		输出lxml库信息
+	6.pip uninstall 库名
+		卸载该库
+
+4.class TreeBuilderForHtml5lib(html5lib.treebuilders._base.TreeBuilder):
+  AttributeError: 'module' object has no attribute '_base'
+
+	解决办法:
+
+	要升级html5lib库至1.0b8 可以解决问题.
+
+	pip install --upgrade html5lib==1.0b8	
+
+5.CSV文件用excel打开出现乱码的问题
+
+    方法一：	
+	先用记事本打开，把utf-8编码格式另存为ASCII格式
+	再用excel打开
+	弊端：可能转过去后所有字符变成一行
+	解决：如果批量的html后都需要换行，可复制进word文件中，ctrl+f查找替换，
+		html--->html^p
+
+    方法二：
+	把后缀csv先改为txt，随便打开一个excel，从excel内部打开文件，找到
+	改好的txt
+
+  
+6.python导入模块importerror的问题，不能导入模块，经查看，模块确实已经安装
+	解决办法：可能自定义名字和模块内函数或者类名重复，可改名尝试。  
+
+7.RuntimeError: maximum recursion depth exceeded while calling a Python object
+	递归问题，超过最大递归数（递归就是自己调用自己） 
+
+8.写好的格式在copy时有时会变成一行
+	解决办法：先粘贴在word中，再复制出来
+
+9.字符串中占位符%s/%d...何时需要加引号'
+	当字符串有其他用途，而不是单纯打印，如：CGI项目中python写的html，python写mysql语句		          
+10.右键没有txt的情况
+      1.运行regedit打开注册表编辑器 
+	展开HKEY_CLASSES_ROOT 
+	找到.txt 
+	选中.txt，查看右侧窗格的“默认值”数据是不是txtfile，如果不是，就双击修改成txtfile 
+      2.在.txt上右击，选“新建——项” 
+	把新建项命名为ShellNew，如果有ShellNew就不用新建了。 
+	选中shellNew，然后“新建”——“字符串值”，将其名称设置为“nullfile”(不包含引号)，，值留空即可。
+	一般出现无法新建本文文件，就是由这两个地方引起的。然后刷新一下注册表和桌面。 如果右击不能立刻出来，就注销一下。
+
+11.ubuntu下安装gevent
+	1.下载gevent包，https://pypi.python.org/pypi/gevent#downloads
+	2.解压，tar -zxvf gevent-1.3.0.tar.gz
+	3.进入解压好的目录，cd gevent-1.3.0
+	4.依次输入下面三条命令：
+		python fetch_libevent.py
+		python setup.py build
+		python setup.py install
+	5.如果提示仍然未安装成功，输入下面的命令：
+		sudo apt-get install libxml2-dev libxslt1-dev python-dev
+		sudo apt-get install zlib1g-dev
+		sudo apt-get install libevent-dev
+	6.从新执行步骤4中的安装命令（第一条应该不需要了，已经成功了）
+
+12.cmd下运行py文件经常会遇到gbk不能解码u'\xao..',u'\200b'之类的问题。
+
+	情况：python字符编码和解码的问题，在linux下运行的好好py文件，在windos cmd下就出问题。
+	原因：当需要在windos cmd中print时，由于cmd默认的codepage字符集是CP936，即GBK的编码，而GBK无法解析一些Unicode字符，
+	      所以会出现“'gbk’ codec can’t encode”的错误。
+	解决：
+	    方案一：把字符串中无法解析的码替换成空格之类的，错误的u'..'码会出现，比如我的错误为：
+		exceptions.UnicodeEncodeError: 'gbk' codec can't encode character u'\u200b' in position 3991: illegal multibyte sequence
+		我的无法解码之处就是u'\u200b'
+		print str出错
+		print str.replace(u'\u200b',u' ')
+	    方案二：把无法解析的码直接忽略掉
+		print str.encode('GBK','ignore')
+	
+13.关于爬虫自动化工具selenium引用Firefox出现geckodriver错误的解决办法
+    解决：
+	1.下载对应的geckodriver（win32/64）
+	2.解压后把geckodriver.ext文件复制到Firefox的根目录下
+	3.把Firefox的根目录配置在环境变量中（有的就删掉，从新配置）
+	4.把py文件（或者程序）关了，再运行

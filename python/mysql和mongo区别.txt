@@ -1,0 +1,20 @@
+mysql和mongodb的区别：
+1.输出条数
+	mysql：limit(m,n)，意思是读取索引m以后的n条记录,相当于mongodb中的skip(m).limit(n)
+	mongodb:limit(n),意思是读取n条记录，通常结合skip()使用,当查询时同时使用sort,skip,limit，无论位置先后，最先执行顺序 sort再skip再limit。
+		db.col.find({},{"title":1,_id:0}).limit(2)中，
+		第一个{}为条件，为空表示返回集合所有文档；第二个 {} 指定那些列显示和不显示 （0表示不显示 1表示显示)。
+
+
+2.排序
+	mysql：order by column asc/desc，表示按照列column的升序/降序排列
+	mongodb：sort({key:1/-1})，表示按照升序/降序排列，1代表升序，-1表示降序。
+
+3.聚合函数
+	mysql：select sum(x) from table group by y
+	 	mysql其他聚合函数有：count(),avg(),max(),min()...
+	mongodb:db.collection.aggregate([{$group:{_id:"y",num_tutorial:{$sum:1}}}])
+		语法：>db.COLLECTION_NAME.aggregate(AGGREGATE_OPERATION)
+		mongodb其他聚合函数有：$avg,$max,$min,$push(文档结果中插入一个值到一个数组)
+					$first/$last表示根据资源文档的排序获取第一个/最后一个文档数据
+		

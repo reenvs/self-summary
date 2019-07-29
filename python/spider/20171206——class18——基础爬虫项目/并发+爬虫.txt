@@ -1,0 +1,585 @@
+﻿
+=====================================================================================
+20171117 星期五 小雨			
+ 
+程序：代码写成的软件
+进程：正在运行的程序
+线程：进程里面可以独立执行的单元，依附于进程
+多线程：进程里面包括多个独立的线程，所有的web项目都是多线程
+
+比如： 	qq音乐属于一个程序
+	运行qq音乐就有了一个qq音乐进程
+	qq音乐里面的播放歌曲、添加喜欢、搜索歌曲...都是线程
+
+
+=============================================================================
+20171120 星期一  爬虫应用
+
+创建线程的方法:函数和类
+
+    1、函数式：调用thread模块中的start_new_thread（）函数产生新线程
+	       thread.start_new_thread ( function, args[，kwargs] )
+	  说明：1.第一个thread为import的thread模块
+		2.function为前面定义的函数
+		3.args为函数传的参数，所有参数在一个元组中，tuple类型
+		4.kwargs为可选参数
+	  注意：当运行程序不执行时，可能是主线程已经执行完了，可以在后面加一个
+		whlie 1：
+		     pass
+		死循环，目的是让主线程继续运行，保证子程序运行结束
+	
+    2、Thread类：Thread类提供了以下方法：
+	1.run():          表示线程活动的方法
+	2.start():        启动线程活动
+	3.join([time]):  等待至线程中止。
+	4.isAlive():     返回线程是否活动的。
+	5.getName():     返回线程名。
+ 	6.setName():     设置线程名。
+
+    3、使用Threading模块创建线程，直接从threading.Thread继承，然后重写__init__方法和run方法：
+--------------------------------------------------------------------------
+#-*-coding=utf-8-*-
+import threading
+import time
+
+t=5
+class Thread(threading.Thread):
+	def __init__(self,name,n,lock):
+		threading.Thread.__init__(self)
+		self.name=name
+		self.n=n
+		self.lock=lock
+
+	#重写run方法
+	def run(self):
+	    global t
+	    for i in range(self.n):
+		#给判断条件上锁，当前线程解除锁后其他线程方可进入
+		self.lock.acquire()
+		if t>0:
+		    time.sleep(2)	
+		    t=t-1
+		    print self.name+"买了1张票，还剩"+str(t)+"张票"
+		else:
+		    print "余票为："+str(t)+"张"
+		#释放锁
+		self.lock.release()
+
+#定义锁
+lock=threading.RLock()
+t1=Thread("张三",3,lock)
+t2=Thread("李四",4,lock)
+#启动线程
+t1.start()
+t2.start()
+		
+------------------------------------------------------------------------------
+线程同步：多线程在共享数据时，可能会同时拿到数据修改或输出，产生不一样的结果。
+	  使用Thread对象的Lock和Rlock可以实现简单的线程同步，这两个对象都有
+    acquire方法和release方法，对于那些需要每次只允许一个线程操作的数据，可以
+    将其操作放到acquire和release方法之间。
+
+python线程中的锁lock和rlock的区别：
+	1、lock锁两次以上形成死锁，lock.acquire()和lock.release()
+	2、rlock只有成对出现，可以锁很多次
+
+------------------------------------------------------------------------------
+python GIL 全局锁：可以实现多线程
+	1、当进行IO操作时，线程切换
+	2、当一个线程连续执行了一定数量的指令时，会出现线程切换
+
+IO密集：多线程，IO操作、计数机达到指定值，切换线程
+------------------------------------------------------------------------------
+CPU密集：多进程
+     	
+	1.os.fork:
+		相当于拷贝父进程，Unix/Linux
+	  	  	os.getpid()获取当前进程id
+	  	  	os.getppid（）获取当前进程的父进程
+	2.multiprocessing：
+		跨平台，手动用“Process类”添加进程，当成百上千个进程时，
+		此方法就过于繁琐，于是出现了进程池。
+	3.进程池
+		进程池“Pool类”也是multiprocessing的一个类
+
+==================================================================================
+
+20171121 星期二 
+
+分布式进程：把Process进程分布到多台机器上，充分利用各个计算机的性能完成复杂任务。
+	    应用：爬虫开发。
+
+协程：可以免去多进程切换CPU的消耗，程序员通过一段代码实现多个任务同时进行。
+
+多线程、多进程、协程----->应用于并发执行的任务
+
+===================================================================================
+
+20171122 星期三 TCP/UDP传输
+
+===================================================================================
+
+20171123 星期四 网络爬虫
+
+1.python的标准库：指不需要安装的库，python自带
+	---python2中，urllib2
+	   如：from urllib2 import urlopen
+	---python3中，urllib
+	   如：from urllib.request import urlopen
+
+	打开网页：
+		response=urlopen("url地址")
+	拿到网页内容：
+		html=response.read()
+		bsObj=html.BeautifulSoup() //非标准库需要引入		
+	取标签元素：
+		bsObj.img---->返回第一个img标签
+		bsObj.find_all(img),返回所有img标签，返回一个列表
+
+2.python中的空是None，其他语言是null
+	存在标签.不存在标签----->None
+	    如：bsObj.img.aaaaa----->None
+	None.方法 or None.属性 返回AttributeError错误
+
+
+======================================================================================
+
+20172224 星期五 搜索引擎----大爬虫
+
+1、通用爬虫：搜索引擎（search engine）
+   	 是一种大型的复杂的网络爬虫，但是通用性搜索存在一定的局限性，主要根据关键字，尽可能多的抓取信息，
+    有关无关的信息都展示出来了。
+
+2、聚焦爬虫：
+    	为了解决“搜索引擎”的局限性，定向抓取相关网络资源的“聚焦爬虫”就诞生了。
+
+3、增量式网络爬虫：
+	指对已经下载的网页只爬取更新的部分。
+
+4、深层网络爬虫：	
+	
+传统方式下载：FTP、http、PUB等，都通过服务器来获取资源，下载的人多会变慢	
+BT方式下载：传销的方式，把一个大文件分成多个部分，甲乙丙分别下载一个部分，其他人下载这个部分除了服务器
+	    还可以去找甲乙丙，用户之间可以彼此访问，拜托了服务器地域的限制，所以人多会变快。
+	BitTorrent，文件以 .torrent结尾，种子文件	
+
+urllib2中请求url时
+	1.get方式：数据请求直接在url网址后拼接
+	           如：request=urllib2.Request(http://127.0.0.1:8080/?name=张三&psw=123456)
+
+	2.post方式：不能直接拼接在url后，以字典的形式传送数据
+		   如：url=http://127.0.0.1:8080
+		       data={name:‘张三’，psw：123456}
+		       request=urllib2.Request（url，data）
+
+Django中Post方式需要设置csrf，因为在setting中，MIDDLEWARE_CLASSES的第四行，csrf那一行配置了
+scrf验证，若不想验证注释掉这一行即可。
+
+HTTP请求报文：
+  1、请求行：
+	请求方式get/post...
+	请求资源url（和报文头的“localhost：端口”一起组成完成url地址）
+	请求版本
+  2、请求头：也叫报文头，属性很多：
+	Accept：设置接收类型（img，png...）
+	Cookie：服务器第一次接受请求自动生成一个Session ID发送给客户端，自动存在cookie中，http没有记忆功能  
+	Host：  IP+端口，在外网中一般都是域名
+	...
+  3、请求体：传入的参数
+
+HTTP响应报文：
+  1、响应行
+	响应协议版本
+	响应吗（1.收到/2.已处理/3.反馈/4.错在客户/5.错在服务器）==状态吗（404、200...）
+  2、响应头
+	setcookie，自动生成一个sessionid传给客户端
+  3、响应体
+
+Firefox浏览器中可以查看请求响应情况：
+	web开发者--->web控制台--->网络--->HTML，发送一个请求，查看详细信息
+
+部分网页会有反爬虫设置，User_Agent必须是网页访问模式，Python访问模式不同
+所以要在请求响应的时候添加一个header,两种添加方式,分别添加User_Agent和Referer，
+详细值在firefox中查看
+
+=======================================下载器==========================================
+
+20171127 星期一 晴 requests模块
+
+
+requests模块下的传参：
+    1、get方式
+	a：url？sex=‘男’ //url为网址串
+	b：先定义一个字典，data={sex：‘男’}
+	   url，params=data
+
+    2、post方式
+	a：先定义一个字典，data={sex：‘男’}
+	   url，data=data	
+	***：注意get和post区别，url，后分别是params和data
+
+网页编码格式：
+    定义请求响应对象：r=requests.get/post(url,params/data=dictionary)
+    打印r的类型：print type（r） ----->requests....response
+    获取字符集：print r.encoding
+    修改字符集：r.encoding="gbk/..."
+
+状态吗：
+	1开头：请求成功
+	2开头：已处理
+	3开头：请求重定向（访问的a网站，服务器自动响应到b网站）
+	4开头：客户端错误
+	5开头：服务器端错误
+
+	3开头的请求重定向和请求转发的区别：
+	    请求重定向：本质上是两次请求两次响应，但是客户只请求了一次，响应了两次不同的url
+	    请求转发：表面上也是请求的a网站，响应的b网站，但是本质上只请求+响应了一次，url没变	
+	    
+========================================解析器=========================================
+
+20171128 星期二 晴  BeautifulSoup
+
+简介：BeautifulSoup是一个可以从html和xml中提取数据的Python库。在爬虫开发中主要用到查找提取功能
+      修改文档的方是很少用到。
+
+创建BeautifulSoup对象有两种方式：
+	1.soup=BeautifulSoup(html,"lxml")
+	2.soup=BeautifulSoup(open("index.html"),"lxml")
+    说明：1中的html是一个变量，文本字符串是html类型的；lxml是它的解析方式,可不写默认HTML解析
+	  2中的index.html是一个html文件	
+
+------------------------------------------------------------------------------------------------------------
+一、BeautifulSoup将HTML文档转化成复杂的树形结构，每个节点是一个python对象，所有对象可归纳为四种：
+    (Tag,NavigableString,BeautifulSoup,Comment)
+	
+1、Tag：所有标签和它的标签内容
+    如：print soup.head
+	print soup.title （多个标签选择第一个）
+    Tag有两个重要属性，是name和attrs
+    	name：soup 对象本身比较特殊，它的 name 即为 [document]，对于其他内部标签，输出的值便为标签本身的名称。
+		如：soup.name----->[document]    soup.head.name------>head
+	attrs：soup.a.attrs------>获取a的所有属性
+		soup.a.attrs['id']获取id属性，没有找到返回异常
+    		soup.a.attrs.get('id')获取id属性，没有找到返回None
+
+2、NavigableString：获取标签内部文字
+	print soup.p.string----->The Document's story
+	print type(soup.p.string)---->class bs4.element.NavigableString
+
+3、BeautifulSoup：
+	BeautifulSoup 对象表示的是一个文档的全部内容.大部分时候,可以把它当作 Tag 对象，是一个特殊的 Tag，
+	我们可以分别获取它的类型，名称，以及属性
+
+4、Comment：
+	Comment 对象是一个特殊类型的 NavigableString 对象
+	print type(soup.a.string)---->class bs4.element.Comment
+	注意：class bs4.element.Comment .父类.父类 = class bs4.element.NavigableString
+	      由于这两个类的获取方式都是soup.a.string，所以在使用拿到的字符串时，可以先做判断：
+		  if type(soup.a.string) == class bs4.element.Comment
+			print "拿到的是注释"
+
+---------------------------------------------------------------------------------------------------------
+二、遍历文档树
+    1.直接子节点（.children或.contents）
+	print soup.head.children-----》<listiterator object at 0x025D5AB0> //生成器对象，可遍历
+	for i in soup.head.children:
+		print i
+    
+    2.所有子孙节点(.descendants)	
+	soup.head.descendants  所有子孙节点
+	而contents,children    只是子节点
+	
+    3.节点内容（.string）
+	如果一个标签内没有其他标签，或者里面只有一个标签，.string输出内容
+	如果标签里面有多个标签，.string，输出none，因为系统不知道要取哪个标签内容
+    
+    4.节点多内容（.strings）
+	如果标签内有多个内容，.strings获取到所有内容，再循环遍历拿到每个内容
+	如果标签多内容之间包括很多空格空行，使用.stripped_strings可去除
+
+    5.父节点（.parent）
+    6.全部父节点（.parents）:祖先节点
+
+    7.兄弟节点（.next_sibling/.previous_sibling）
+	注意：实际文档中的tag的 .next_sibling 和 .previous_sibling 属性通常是字符串或空白，因为空白或者换行
+	      也可以被视作一个节点，所以得到的结果可能是空白或者换行
+    8.全部兄弟节点（.next_siblings/.previous_siblings）
+
+    9.前后节点（.next_element/.previous_element）
+    10.全部前后节点（.next_elements/.previous_elements）
+
+-----------------------------------------------------------------------------------------------------------		
+三、搜索文档树
+    1.name参数
+	（1）传字符串(标签名)
+		soup.find_all('a') 找到所有<a>标签
+		soup.find_all('b') 找到所有<b>标签	
+
+	（2）传入正则表达式
+		import re
+		soup.find_all(re.compile("^b")) 找到所有b开头的标签，<body>,<b>...
+
+	（3）传列表
+		soup.find_all(['a','b']) 列表中的任意一个都是匹配项
+
+	（4）传True
+		匹配所有值
+
+	（5）传方法
+		如果没有合适的匹配器，可以自定义方法来过滤
+		例如：要找到有class属性，并且没有id属性的标签
+		      	def has_class_no_id(tag):
+				return tag.has_attr('class') and not tag.has_attr('id') 
+			soup.find_all(has_class_no_id)  通过该方法查找
+
+    2.keyword参数
+	（1）关键字查询（在tag的属性中查找）
+		soup.find_all(id='link2')
+	（2）如果和python关键字冲突，加个下划线
+		soup.find_all(class_="sister")
+	（3）可以指定多个参数同时过滤
+		soup.find_all('a',class_="sister")
+	（4）有些属性在搜索中不能使用，如：HTML5中的 data-* 属性，这种情况可以通过 find_all() 方法的 
+	     attrs 参数定义一个字典参数来搜索包含特殊属性的tag
+		soup.find_all(attrs={"data-foo":"value"})
+
+    3.text参数
+	通过 text 参数可以搜索文档中的字符串内容.与 name 参数的可选值一样, text 参数接受 字符串 ,
+	正则表达式 , 列表, True
+	（1）soup.find_all(text='***')
+	（2）soup.find_all(text=['***','###','$$$'])
+	（3）soup.find_all(text=re.compile("***"))    #正则匹配，需要import re
+	
+    4.limit参数
+	soup.find_all('a',limit=2) 符合条件的a可能有很多个，但是我不需要让返回那么多，所以限制个数
+
+    5.recursive参数
+	find_all默认返回所有子孙节点，如果只需要子节点，设置recursive=False
+	soup.html.find_all("title")	--------------> [<title>The Dormouse's story</title>]
+	soup.html.find_all("title",recursive=False)	[]
+
+四、find的多种类型
+	（1）find，只返回找到的第一个节点
+	（2）find_all
+	（3）find_parent/find_parents
+		find_all() 和 find() 只搜索当前节点的所有子节点,孙子节点等. find_parents() 和
+		find_parent() 用来搜索当前节点的父辈节点
+	（4）find_next_sibling() / find_next_siblings()	   
+	     find_previous_sibling() / find_previous_siblings()
+	（5）find_all_next() / find_next()
+	     find_all_previous() / find_previous()
+
+五、CSS选择器
+	（1）通过标签名 soup.select("a")
+	（2）通过类名   soup.select(".类名")
+	（3）通过id名   soup.select("#id名")
+	（4）组合查找   soup.select('p #link1') 查询p标签，id是link1的节点
+			soup.select('head > title') 查询head标签子节点title标签
+	（5）属性查找   soup.select('p a[href="......"]') 
+	
+=====================================================================================================
+20171129 星期三 小雨/3℃ XML && XPath
+	
+XML：是一种通用的数据交换格式，用来 数据传输，配置文件
+	标签没有预定义，即用户自定义，用来表示有层次关系的数据
+HTML:显示数据
+
+W3C：World Wide Web Consortium,万维网联盟。是对网络标准制定的一个非盈利组织。
+
+合格的XML：
+	1.头部必须是：<?xml version="1.0" encoding="UTF-8">
+			版本号，编码字符集
+			同时要另存为utf-8，否则报错
+	2.有且只有一个根标签
+	3.其他标签必须套在根标签内部，不能交叉嵌套
+
+合格的XML不一定是一个合格的配置文件，还必须符合约束文档的约束，约束有两种：
+	1.dtd约束
+	2.schema
+
+<!DOCTYPE 中国 SYSTEM/PUBLIC "DTD文档路径">
+  说明：约束根元素名字必须是“中国”
+	SYSTEM是本地文件，PUBLIC是网络文件
+
+-----------------------------------------------------------------------------------------------------
+XPath 是一门用来在XML中查找信息的语言，用于在XML中通过元素和属性进行导航。虽然为XML设计，HTML也可用。
+XPath 既然叫Path,就是以路径表达式的形式来指定元素
+
+XPath使用：节点、语法、轴、运算符
+    1.Xpath节点
+	通过节点树来对待，有七种类型的节点：元素、属性、文本、命名空间、处理指令、注释、文档（根）节点
+	树的根（第一个标签元素）称为文档节点或根节点
+    2.Xpath语法
+
+	XPath 使用路径表达式来选取XML 文档中的节点或节点集
+	1.‘节点名’：选取该节点的所有子节点，如classroom：选取classroom的所有子节点（不是后代节点）
+	2.‘/’     ：从根节点选取，如classroom/student：选取classroom的所有子节点叫student的
+	3.‘//’    ：从任意位置选取，如classroom//student：选取classroom的后代节点叫student的
+	4.‘.’     ：选取当前节点
+	5.‘..’    ：选取当前节点的父节点
+	6.‘@’     ：选取属性，如//@lang，选取名为lang的所有属性
+
+	谓语条件：在选定元素（集）后加的[]的限制条件
+	1./classroom/student[1]：选定元素集中的第一个student
+	2./classroom/student[last()]：选定元素集中的最后一个student
+	3./classroom/student[last()-1]：选定元素集中的倒数第二个student
+	4./classroom/student[position()<3]：选定元素集中的前两个student
+	5.//name[@lang]：选取拥有属性为lang的所有name元素
+	6.//name[@lang='en']：选取拥有属性为lang且值为en的所有name元素
+	7./classroom/student[age>20]/name
+
+	通配符‘*’和 操作符‘|’：*匹配任意元素，|是或的意思，左右两边都匹配
+	1./classroom/* ：classroom下的所有子元素
+	2.//* ：文档所有元素
+	3.//name[@*] ：所有带属性的元素
+	4./classroom/student/name|//age ：符合路径的name元素和所有age元素
+	
+    3.Xpath轴
+	定了节点和当前节点的关系：兄弟节点、父节点、子节点...
+	绝对路径：从根节点（文档节点）开始的路径
+	相对路径：从其他地方开始，比如//表示任意的，./表示当前路径下
+
+	1./classroom/child::teacher ：选取classroom子元素中的teacher节点
+	2.//student/descendant::id ：选取所有以student为祖先节点的id节点
+	3./classroom/student[2]/following-sibling::* ：第二个student节点之后的所有兄弟节点
+	4./classroom/student/name/attribute::* ：该路径name下的所有属性
+	
+
+================================================存储器===============================================
+
+一、HTML正文抽取：json和csv
+    1、json
+	python对json文件的操作分为编码和解码，通过json模块来实现。
+
+	编码是把python对象转化成json对象的过程，用到dump和dumps两个函数，这两个函数的区别是：
+	    dump  把python对象转为json对象，同时通过fp文件流写在文件中。
+	    dumps 则是生成了一个字符串
+	    如：
+	    拿到一个Python对象，或者自定义，或者爬取
+	    with open("xx.json","w") as f:
+		json.dump(pythonObj,fp=f,Skipkeys=True,ensure_ascii=False,indent=4)
+
+	    打开xx.json文件，如果没有则自动创建
+	    dump的参数：
+		1.pythonObj：为python对象
+		2.fp：即filepath（个人理解）f为打开的文件，即把转成的json对象保存在f中；	
+		3.skipkeys：的值默认为False，如果dict 的keys 内的数据不是python 的基本类型(str、unicode、
+		  	int、long、float、bool、None )会报TypeError错误，改为True，就会跳过这类key。
+		4.ensure_ascii默认为True，如果dict 内含有非ASCII 的字符，则会以类似“\uXXXX”的格式显示数据，
+			设置成False 后，就能正常显示。
+		5.indent：非负整型，如果是0,或者为空，则一行显示数据；给一个数字，表示按该数字合理缩进每行。
+
+	解码是json--->python对象的过程，load和loads
+	    load  解码fp文件
+	    loads 解码字符串
+
+    2、csv
+	文件以纯文本形式存储表格数据(数字和文本)。
+	纯文本意味着该文件是一个字符序列，不含必须像二进制数字那样被解读的数据。
+	python对csv文件的写入和读取用到csv模块：
+	csv.writer() 和 csv.reader()
+
+	写入csv：
+	1.下列为csv对应的python对象模型（列表嵌套元组的模型）
+	-----------------------------------------------------------------------------
+	import csv
+	headers=['ID','Username','Password','Age','Country']
+	rows=[
+	    (1001,'zhoujing','zhoujing_pass',24,'China'),
+	    (1002,'zhanglei','zhanglei_pass',20,'USA'),
+	    (1003,'zhaojing','zhaojing_pass',20,'USA'),
+	      ]
+
+	把上面python对象写入到csv文件中：
+	with open('zhangsan.csv','w') as f:  //变量f定义打开的文件，没有该文件则自动创建
+	     f_csv = csv.writer(f)	     //定义一个writer对象	
+	     f_csv.writerow(headers)	     //写入一行用row	
+	     f_csv.writerows(rows)	     //写入多行用rows
+
+	---------------------------------------------------------------------------------	
+	2.列表嵌套字典的模型
+	---------------------------------------------------------------------------------
+	import csv
+	headers=['ID','Username','Password','Age','Country']
+	rows=[
+	    {"ID":1001,"Username":'zhoujing',"Password":'zhoujing_pass',"Age":24,"Country":'China'},
+	    {"ID":1002,"Username":'zhanglei',"Password":'zhanglei_pass',"Age":20,"Country":'USA'},
+	    {"ID":1003,"Username":'zhaojing',"Password":'zhaojing_pass',"Age":20,"Country":'USA'},
+	      ]
+
+	with open('zhangsan.csv','w') as f:
+	    f_csv = csv.DictWriter(f,headers)
+	    f_csv.writeheader()
+	    f_csv.writerows(rows)
+	----------------------------------------------------------------------------------
+
+	读取csv：
+	1.常规读取
+	-----------------------------------------------------------------------------------
+	import csv
+	with open("zhangsan.csv","r") as f:
+	    f_csv=csv.reader(f)   //创建reader对象
+	    headers=next(f_csv)   //读取头行
+	    print headers
+	    for row in f_csv:     //遍历内容
+	        print row
+	----------------------------------------------------------------------------------
+	2.为了避免索引读取造成混乱，考虑使用命名元组
+	----------------------------------------------------------------------------------
+	from collections import namedtuple
+	import csv
+	with open("zhangsan.csv","r") as f:
+	    f_csv=csv.reader(f)
+	    headings=next(f_csv)
+	    Row=namedtuple("Row",headings)
+	    print Row
+	    for r in f_csv:
+	        row=Row(*r)
+	        print row.Username,row.Password
+	        print row
+
+	它允许使用列名如row.UserName 和row.Password 代替下标访问。需要注意的是这个只有在列名是
+	合法的Python 标识符的时候才生效。
+	--------------------------------------------------------------------------------------
+	3.读取到一个字典序列中
+	--------------------------------------------------------------------------------------
+	import csv
+	with open("zhangsan.csv","r") as f:
+	    f_csv=csv.DictReader(f)
+	    for row in f_csv:
+	        print row.get('Username'),row.get('Password')
+	--------------------------------------------------------------------------------------
+
+二、多媒体文档抽取：获取url，下载到本地
+    1.获取url方式就是爬取数据，展示到页面，之前做过
+    2.下载到本地
+	本节主要介绍urlib 模块提供的urlretrieve()函数。urlretrieve()方法直接将远程数据下载到本地，
+
+	函数原型如下:
+	    urlretrieve(url,filename=None,reporthook=None,data=None)
+		1.filename 指定了存储的本地路径(如果参数未指定，ullib 会生成一个临时文件保存数据。)
+		2.reporthook是一个回调函数。当连接上服务器以及相应的数据块传输完毕时会触发该回调函数，
+		  我们可以利用这个回调函数来显示当前的下载进度。
+		3.data 指post 到服务器的数据，一般不用管
+		4.该方法返回一个包含两个元素的( filename,headers )元组，filename 表示保存到本地的路径
+		  header 表示服务器的响应头。 
+		  所以，可以用filename，headers=urlretrieve(url,....)来返回两个元素
+
+	例如：要爬取一个页面的图片
+		1.通过requests下载器拿到该网页的内容
+		2.通过BeautifulSoup或者xpath解析器，拿到所有img标签，拿到img标签的url属性
+		3.把上面的url传入urlretreeve方法中，filename给出路径文件
+		
+================================================SMTP==================================================
+
+
+
+
+
+	
+
+
+
+
+
+

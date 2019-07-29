@@ -1,0 +1,130 @@
+20171214 星期四 scrapy框架
+
+一、简单爬取一个页面内容
+
+1、创建一个scrapy项目：scrapy startproject 项目名
+
+2、进入这个项目，再进入项目名的目录，进入spider，在这里新建一个py文件即可，就是我们的解析器
+	注意：py文件名不要与项目名一样，影响后续调用
+
+3、代码如下：
+
+--------------------------------------------------------------------
+#-*-coding:utf-8-*-
+import scrapy
+
+class A(scrapy.Spider):
+    #name名，不能重复其他类的
+    name="a"
+    #定义域名
+    allow_domains=["a.com"]
+    #定义根url
+    start_urls=["http://www.runoob.com/python/python-tutorial.html"]
+
+    def parse(self,response):
+	a_s=response.xpath("//div[@id='leftcolumn']/a")
+	for a in a_s:
+	    title=a.xpath("./@title")[0].extract()
+	    href1=a.xpath("./@href").extract()[0]
+	    href="http://www.runoob.com"+href1
+	    print title,href
+--------------------------------------------------------------------
+代码解析：
+	1.必须定义一个类，并且该类继承scrapy模块下的Spider父类
+  	2.name用于区别spider，在调用该爬虫时需要用到，必须有且唯一
+ 	3.allow_domains是允许域名，可写多个
+	4.start_urls是跟url，必须有
+	5.自定义函数parse的是解析器函数，必须这样写，参数response为下载好的网页代码
+	6.response.xpath("")，调用xpath方法返回需要的数据
+	7.extract()把对象序列化Unicode字符串
+	8.xpath返回一个列表，哪怕一个对象也是列表形式
+
+4、调用爬虫：
+	1.退到该项目根目录，scrapy crawl name名
+	2.把自己编写的py文件拷贝到一个目录，在这个目录下运行：scrapy runspider py文件名
+
+=========================================================================================
+20171215 星期五 scrapy框架
+
+昨天程序的升级，完整版！（需要填写items.py文件、pipelines.py文件、settings.py配置文件）
+
+1、spider的.py程序（即parser解析器）
+----------------------------------------------------------------------------------
+#-*-coding:utf-8-*-
+
+import scrapy
+from firstscrapy.items import FirstscrapyItem
+from scrapy.selector import Selector
+
+#写一个爬虫类，继承scrapy.Spider
+class CainiaoSpider(scrapy.Spider):
+    #爬虫名，之后根据爬虫名调用该爬虫
+    name="cainiao"
+    #允许到域名
+    allow_domians=["cainiao.com"]
+    #根url
+    start_urls=["http://www.cnblogs.com/qiyeboy/"]
+
+    #解析数据
+    def parse(self,response):
+	#提取数据
+	days=response.xpath("//div[@class='day']")
+	for day in days:
+	    #time=day.xpath("./div[@class='dayTitle']/a/text()").extract()[0]
+	    time=day.xpath("./div[1]/a/text()").extract()[0]
+	    title=day.xpath(".//div[@class='postTitle']/a/text()").extract()[0]
+	    url=day.xpath(".//div[@class='postTitle']/a/@href").extract()[0]
+	    zy=day.xpath(".//div[@class='c_b_p_desc']/text()").extract()[0]
+	    #print time,title,url,zy
+		
+  	    firstitem=FirstscrapyItem(time=time,title=title,url=url,zy=zy)
+	    yield firstitem
+   	#创建一个选择器,翻取下一页数据
+   	nextPage=Selector(response).re(u'<a href="(\S*)">下一页</a>')
+	#print nextPage[0]
+	if nextPage:
+	    yield scrapy.Request(url=nextPage[0],callback=self.parse)
+
+更新说明：
+	1.导入了items模块的类，通过调用类传值并yield返回
+	2.导入了Selector选择器（可以理解成scrapy中的beautifulsoup），注意这里通过Request方法
+	  把值从新传给引擎器去调度，回调函数callback调用自己实现了循环爬取
+------------------------------------------------------------------------------------
+
+2、items.py文件
+-----------------------------------------------------------------
+import scrapy
+
+class FirstscrapyItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    time=scrapy.Field()
+    title=scrapy.Field()
+    url=scrapy.Field()
+    zy=scrapy.Field()
+
+模块说明：
+	1.模块框架在创建项目的那一刻已经生成，只需要填写如：name = scrapy.Field()的值
+	2.类可以继承其他类（比如我想比上个类多传两个值，而上个类已经传了很多个，直接继承上个类）
+------------------------------------------------------------------------------------------------
+
+3、pipelines.py文件
+---------------------------------------------------------------------------------------
+    	1.可以不用填，scrapy框架有内置存储方式，之后通过命令直接存储即可
+    	2.存储命令：项目根目录：scrapy crawl name名 -o xxx.json/xxx.csv/xxx.xml
+---------------------------------------------------------------------------------------
+
+4、settings.py设置
+---------------------------------------------------------------------------------------
+ 	1.打开settings.py文件，找到# Configure item pipelines，这就是配置存储文件的地方
+	2.我们发现，ITEM_PIPELINES = {
+    					'firstscrapy.pipelines.FirstscrapyPipeline': 300,
+				     }
+	  这三行是被注释掉的，我们去掉#就可以了。括号内是键值对的方式，可以定义多个，键就是	  	  
+	  对应的爬虫，值是执行顺序，从小到大执行
+------------------------------------------------------------------------------------------
+
+配置完成后，根目录：scrapy crawl name名 -o xxx.json/xxx.csv/xxx.xml
+	  
+
+	

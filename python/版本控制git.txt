@@ -1,0 +1,147 @@
+20171211 星期一
+
+版本控制工具：
+	版本控制软件提供完备的版本管理功能，用于存储、追踪目录（文件夹）和文件的修改历史，是软件开发者的必备工具，是软件公司的基础设施。
+	版本控制软件的最高目标，是支持软件公司的配置管理活动，追踪多个版本的开发和维护活动，及时发布软件
+
+SVN：集中式的版本控制系统
+	1.从中央服务器那得到最新版本
+	2.更新内容，提交上去
+
+GIT：分布式的版本控制系统，每个人的电脑都是完整的系统，windos、lilux、ios等系统
+	1.每个人自己电脑都是从主机克隆的完整系统
+	2.有更新的内容成员之间相互推送
+
+-------------------------------------------------------------------------------
+参考网址：http://blog.csdn.net/free_wind22/article/details/50967723
+	  http://www.runoob.com/git/git-basic-operations.html
+
+一、git下载安装配置
+
+    1.下载git：https://git-scm.com/downloads
+
+    2.配置git，打开git bash：
+	git config --global user.name "..."
+	git config --global user.email "..."
+
+    3.设置默认仓库
+	创建一个文件夹（任何你想的位置），配置该文件夹为默认仓库
+	1.可以打开git bash，输入 git init path路径
+	2.更为简单，在仓库下右键，git bash here，打开后输入：git init 即可
+
+    4.提交，在仓库下新建一个txt，（我的是readme.txt）	
+	1.git add readme.txt 		//无任何提示即成功
+	2.git commit -m '注释内容'	//提交
+	每次修改重复上面两个内容
+	
+    5.常用命令
+	git log 	 //显示最近修改记录详细信息，最新的在最上面
+	git log --pretty=oneline  //放在一行显示，简略
+	git status 	 //查看当前状态
+	git diff xxx.txt //查看xxx.txt的变化
+
+    6.版本回退（上个版本）
+	git reset --hard HEAD^     //符号^有几个就是返回几个版本
+	git reset --hard HEAD^^^   //倒退两个版本	
+	git reset --hard HEAD^20   //倒退20个版本
+
+    7.版本前进（下个版本）
+	git reset --hard 版本号
+	当不知道版本号的时候，可通过：git reflog，查询所有版本更新记录	
+
+    8.撤销
+	1.仅在工作区，未添加到暂存区、未commit提交：
+		1.能找到的话可手动打开文件修改
+		2.git checkout -- 文件名
+
+	2.工作区和暂存区都添加了
+		提交上去，再按6的方法恢复版本
+
+    9.删除文件
+	1.可在仓库下手动删除
+	2.在git bash下用命令删除：rm 文件名，如rm aa.txt
+	    通过状态命令：git status，发现有个删除行为，但是红色
+	    通过撤销命令：git checkout -- aa.txt,发现刚删除的文件又回来了，
+		    	  可见没有删除干净，仍然在暂存区
+	3.
+	rm aa.txt
+	git status  //红色
+	git add aa.txt
+	git status  //绿色  
+	git commit -m "aa.txt删除"   //彻底删除
+
+----------------------------------github远程仓库------------------------------------
+
+一、让C:\Users\Administrator目录下出现.ssh文件，默认没有
+	1.把git文件目录下的usr下的bin下的ssh-keygen.ext配置到环境变量中，即
+		C:\Program Files\Git\usr\bin
+	2.在cmd中的C:\Users\Administrator目录下输入下面的命令：
+		ssh-keygen -t rsa -C "xxx.163.com"  
+		//字符串前面固定的，后面为你的GitHub邮箱账号
+	3.一直按回车即可，输入字符的话就是即将要创建的.ssh文件的密码
+	4.打开C:\Users\Administrator目录，发现多了个.ssh文件夹
+
+二、给GitHub设置ssh
+	1.打开上面刚才创建的.ssh文件夹，有两个文件
+		1.id_rsa，      //为密钥，不能轻易给别人
+		2.id_rsa.pub	//为公钥，下面设置GitHub用到
+	2.GitHub--->settings--->SSH and GPGkeys--->new SSH key
+		key里面复制id_rsa.pub里面的内容
+    	
+三、远程仓库和本地仓库
+    1.新建一个远成仓库，右上方+，new repository
+
+    2.给空远程仓库，添加本地仓库
+	1.在仓库下打开git bash 
+	2.git remote add origin https://github.com/reenvs/testgit1  
+	    //本地仓库上传到远程，testgit1是刚才github网站创建的新仓库
+	3.git push -u origin master  
+	    //-u origin master 只是第一次建立远程连接，以后git push即可
+
+    3.远程仓库---->本地
+	1.创建一个空文件夹，右键打开git bash
+    	2.git clone https://github.com/reenvs/testgit1
+
+    4.上面已经和远程建立了连接：
+	本地------>远程 git push
+	远程------>本地 git pull
+
+四、创建和合并分支：
+        意义 ：主分支master比较重要，一般不动；创建一个分支，所有操作在分支上操作，
+		新分支修改好后，git push提交；此时主分支master数据并未更新，需要更新：
+		git pull（从远程更新）
+
+	1.git branch dev    	//创建一个分支dev
+	2.git checkout dev  	//切换到dev分支
+	3.git checkout -b dev  	//创建+切换到dev分支，步骤3=步骤1+2
+	4.git branch		//查看分支
+	5.git merge dev		//合并dev分支到主分支master中，当前是master分支
+	6.git branch -d dev	//删除dev分支
+
+	问题：两个分支可能同时改一个文件，这时候同时提交，以哪个为准？？？
+	答案：自行商量，其中一个人删除修改	
+	
+---------------------------------------------------------------------------------
+pycharm连接GitHub
+
+1、配置pycharm的git和GitHub
+	1.pycharm选择：File/settings/version control/Git，配置path路径
+	2.pycharm选择：File/settings/version control/GitHub
+		//token--->Password，输入GitHub账号密码，可test测试是否成功
+	
+2、从GitHub下载到本地pycharm
+	1.VCS/checkout.../GitHub.../链接.../clone
+	2.链接应该就自动获取了（本人是做过上传操作之后进行下载操作，所以有链接）
+	  链接就是每个远程仓库对应的网址，也可输入别人的远成仓库（公钥）
+	
+3、本地pycharm上传到GitHub
+    1.增加项目
+	VCS/import.../share project...
+    2.更新项目
+	1.右键项目（或者文件，就是你要更新的东西）--->git--->add
+	2.右键项目（或者文件，就是你要更新的东西）--->git--->commit（可以+push）
+	3.右键项目（或者文件，就是你要更新的东西）--->git--->repository--->push
+    3.合作开发
+	邀请别人：远程仓库--->settings--->Collaborators
+	
+	
