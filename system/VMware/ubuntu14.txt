@@ -1,0 +1,23 @@
+问题一：安装好后无和windows无法复制粘贴
+解决：
+	第一步：sudo apt-get autoremove open-vm-tools
+	第二步：sudo apt-get install open-vm-tools-desktop
+	然后重启
+ 	搞定
+
+问题二：apt-get提速
+解决：
+	备份/etc/apt/source.list
+	修改/etc/apt/source.list文件，清华源
+
+问题三：pip提速
+解决：
+	修改 ~/.pip/pip.conf (没有就创建一个文件夹及文件。文件夹要加“.”，表示是隐藏文件夹)
+	
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+
+[install]
+trusted-host=mirrors.aliyun.com
+
+	附：windows下，直接在user目录中创建一个pip目录，如：C:\Users\xx\pip，新建文件pip.ini。内容同上。

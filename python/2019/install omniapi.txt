@@ -1,0 +1,31 @@
+1、
+
+2、Cannot fetch index base URL https://pypi.python.org/simple/
+	解决：这个就是相源的问题，正常安装你的根目录下会有这个pip.log文件，如下
+
+	root@liu:~# ll .pip/ 
+ 	total 16 
+ 	drwxr-xr-x 2 root root 4096 Sep 1 23:06 ./ 
+ 	drwx—— 6 root root 4096 Sep 1 23:06 ../ 
+	-rw-r–r– 1 root root 85 Sep 1 23:04 pip.conf 
+		现在修改源，创建文件php.conf，内容如下
+
+		root@liu:~# cat .pip/pip.conf 
+ 		[global] 
+ 		index-url=http://pypi.douban.com/simple
+
+		v2ex: 
+		http://pypi.v2ex.com/simple 
+
+
+3、pip安装报错：Command python setup.py egg_info failed with error code 1 in /tmp/pip_build_root/psycopg2
+        解决：缺少依赖
+	建议：这种问题可针对包名搜索，pip安装package失败
+		1)安装libpq-dev
+			sudo apt-get install libpq-dev python-dev
+		2)pip install psycopg2
+
+4、ubuntu下安装cryptography
+	解决：
+		1）sudo apt-get install python-dev python-pip libxml2-dev libxslt1-dev zlib1g-dev libffi-dev libssl-dev
+		2）
