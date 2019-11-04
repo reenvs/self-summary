@@ -1,0 +1,27 @@
+
+================== 第一部分 postgresql命令行操作 ===================================
+
+一、windows命令行操作
+	1. 进入postgresql：psql -h localhost -U postgres -p 5432 (-d postgres)
+		我的命令是：.\psql.exe -U postgres -h localhost -d postgres -p 5433
+	2. \l	数据库列表
+	3. \c	连接数据库
+	4. \d	查看所有表
+	5. \d table1 查看table1表结构
+	6. \q	退出
+
+
+================== 第二部分 postgresql问题: ===================================
+
+一、（psql1）打开pgadmin4连不上数据库，报错：unknown error（interner server error）
+	解决办法：
+	1.查看日志文件（安装postsql时指定的data位置，未指定默认在postsql软件安装位置）
+	2.我查到的错误如下：
+		9-10-18 18:56:47.410 HKT [21448] 致命错误:  用户 "postgres" Password 认证失败
+		2019-10-18 18:56:47.410 HKT [21448] 详细信息:  用户 "postgres" 的口令不匹配。
+		与Connection相匹配的文件行位于 pg_hba.conf 82: "host    all             all             ::1/128                 md5"
+	3.修改pg_hba.conf文件，最下面把md5改成trust，再连接数据库，发现成功，不成功从新打开pgadmin或刷新页面链接
+	
+二、用pgadmin4连接postgresql后表和列修改操作可以执行，不能执行查询数据操作（数据增删改查时页面一片白）
+	解决办法：
+	

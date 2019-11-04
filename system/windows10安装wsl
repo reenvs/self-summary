@@ -1,0 +1,6 @@
+一、开启windows10子系统
+
+1. 打开hyper-v
+2. 管理员cmd运行：
+	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+3. 微软商店下载ubuntu

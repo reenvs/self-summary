@@ -1,0 +1,11 @@
+1、模块插件下新增应用后，重启服务器，更新页面应用，但是看不到新应用，也没有报错.
+排查方式：
+	1.先注释掉新应用目录(library_app/library_checkout)下__manifest__.py文件下的data内容，删掉__init__.py文件引用，发现还是不能显示
+	2.那肯定是__manifest__.py文件的问题，但是为什么不报错呢
+	3.因为上面是直接运行脚本，页面上升级，我们这次采用命令行运行脚本并且升级模块来尝试
+		1.切换到odoo-bin脚本目录下，运行：python odoo-bin -d odoo -i library_checkout
+		2.发现报错了：odoo.exceptions.UserError: ("You try to install module 'library_checkout' that depends on module 'library.member'.
+			\nBut the latter module is not available in your system.
+		3.错误的大致意思就是，depends依赖的模块不存在
+	4.原因找到了，是因为我们depends以来的模块没写正确，应该是同级目录名：library_member，而我写成了ORM中模块名：library.member
+	5.我们发现虽然报错了，但是服务器还是启动了，所以页面发现不了异常，其他模块可以正常操作访问

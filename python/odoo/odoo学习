@@ -1,0 +1,330 @@
+一、部署odoo服务
+
+1、docker运行odoo服务
+参考：https://www.cnblogs.com/l-hh/p/10793257.html
+
+2、源码安装开启服务
+
+
+二、odoo架构
+
+1、数据层
+	1. 数据层是最底层，负责数据存储和持久性。只支持postgresql
+	2. 二进制文件（如文档和图像）存储在文件系统，位于filestroe目录中。
+	
+2、逻辑层
+	逻辑层负责雨数据层的所有交互，有odoo服务器处理
+	
+3、表示层
+	1. 负责表示数据并与用户交互，通过客户端实现
+	2. 对于表示层，odoo提供了一个功能齐全的开箱即用web客户机。web客户机支持业务应用程序所需的所有特性：
+		登录会话、导航菜单、数据列表、表单等等。
+	3. 补充表示层包括网站框架。
+	
+	docker run -p 8069:8069 --name odoo --link db:db -t odoo:12
+
+
+三、 odoo应用开发
+
+1、创建一个新应用（addon路径下新增python目录（如library），__manifest__中配置新应用信息）
+	1. 添加顶级菜单（library/views目录）
+	2. 添加权限组（library/security目录，xml文件）
+	3. 给权限组添加权限（library/security目录，csv文件）
+	4. 添加自动化测试（library/test目录）
+
+2、数据层
+	1. 创建一个数据模型（model，也就是数据库表映射）
+	
+3、视图层
+	1. 添加菜单项
+	2. 创建表单视图
+	
+4、业务逻辑层
+	1. 和数据层在一个py文件，数据层用来定义数据模型，逻辑层用函数来进行逻辑实现
+	
+5、网页和控制器
+	新建controller目录，用http.route()装饰器实现路由
+	
+四、 odoo知识点
+
+1、命令行选项
+	-d	指定数据库
+	-i	指定逗号分隔的多个模块名（安装）
+	-u	指定逗号分隔的多个模块名（升级）
+	-- test-enable	在安装和升级模块时进行测试
+	
+	例如：~/odoo-dev/odoo/odoo-bin -d dev12 -i library_app
+	
+2、模块字段说明（py文件、记录集、数据库操作）	***重点***
+	(1) __manifest__.py文件
+		name		插件模块标题字符串
+		description	功能描述长文件，通常为RST格式，description可由模块顶层目录中的README.rst或README.md代替，如果两者都不存在，将使用声明文件中的description。
+		author		可以是逗号分隔的好几个作者
+		depends		依赖模块插件列表，安装该插件时会自动安装所依赖的插件
+		application	布尔类型，代表模块是否在应用列表中以app展现
+		// 以下为拓展
+		summary		副标题
+		version		app版本，一般在前面加上odoo版本，如12.0.1.0
+		licence		开源协议，默认为LGPL-3
+		website		了解模块更多信息的 URL，可以帮助人们查看更多文档或提供文件 bug 和建议的跟踪
+		category	带有模块功能性分类字符串，缺省为Uncategorized。已有分类可通过安全组表单（位于Settings > Users & Companies > Groups）的 Application字段下拉列表查看（需开启调试模式）
+		installable	默认为True，但可以通过设置为false来禁用模块
+		auto_install	若设置为 True，在其依赖已安装时会自动安装，用于胶水模块，用于同一实例上两个模块安装后功能的连接。	
+		
+	(2) model文件字段说明
+		_name			创建模型的内部标识符，必须
+		_description	友好提示，不强制但推荐
+		_order			排序，如_order = 'name, date_published desc'
+		_rec_name		关联字段，默认为name字段，但可以指定其他字段
+		_table			数据库对应的表名，不指定默认为模块名的.改为下划线
+		_log_access		布尔值，用于设置是否创建追踪字段（create_uid, create_date, write_uid和write_date）
+		_auto			布尔值，是否自动创建数据库表
+		
+		1.数据格式字段说明
+			Char		单行文本
+			Text		多行文本
+			Selection	下拉选项列表
+			Hmtl		文本字段，但有针对html文本文件的特殊处理
+			Integer		
+			Float		第二个参数是一个指定字段精度的(x,y)元组，x 是数字总长，y 是小数位。
+			Monetary	与浮点字段类似，但带有货币的特殊处理。第二个参数currency_field用于存储所使用货币，默认应传入currency_id字段
+			Date/Datetime
+			Boolean
+			Binary		存储文件类二进制文件，只需一个字符串文本位置参数。它可由Python使用 base64编码字符串进行处理。
+		
+		2.数据格式字段属性说明
+			string		字段的默认标签，在用户界面中使用。如未传入，将由字段名自动生成
+			default		设置字段默认值。可以是具体值，或是可调用引用，有名函数或匿名函数
+			help		提供ui中鼠标悬停字段向用户显示的提示文本
+			readonly	不强制，如果设置成true，字段不可编辑
+			required	不强制，如果设置true，用户界面中该字段必填
+			index		不强制，如果设置true，为字段添加数据库索引
+			copy		不强制，如果设置false，让字段在使用ORM copy()方法复制字段时忽略该字段。除to-many关联字段外，其他字段默认会被复制
+			groups		可限制字段仅对一些组可访问并可见，值为逗号分隔的安全组xml ID列表
+			states		
+		
+		3.文本字符串Char、Text、HTML特有属性
+			size		设置最大允许尺寸，例如设有最大长度的社保账号，一般情况下不建议使用
+			translate	使得字段内容可翻译，带有不同字段的不同值
+			trim		默认为true，启动在网络客户端中自动去除周围的空格，可通过设置trim=false来取消，odoo12引入
+		
+		4.域（domain）表达式说明
+			说明：使用一个特殊语法供 odoo ORM解析，生成数据库查询的where表达式。域表达式是一组条件组成的列表，每个条件都是（'字段','表达式','值'）组成的元组。
+			字段名：是一个待过滤字段，可使用点号标记来表示关联模型中的字段
+			运算符：
+				1. 常用比较运算符有<, >, <= , >=, =和!=
+				2. ‘=like’和’=ilike’匹配某一模式，这里下划线_匹配单个字符，百分号%匹配任意一组字符。
+				3. ‘like’匹配’%value%’模式，’ilike’与其相似但忽略大小写。还可以使用’not like’和’not ilike’运算符。
+				4. child of’在配置支持层级关联的模型中查找层级关系中的子级值
+				5. ‘in’ 和’not in’用于查看给定列表的包含，所以其值为一个列表。用于to-many关联字段时，in运算符和contains运算符一样。
+				6. ‘not in’是in的反向运算，用于查看不在列表中的值
+			借助两个例子说明：
+				例1：[‘!’, (‘is_done’,’=’,True)]	// 过滤出所有未完成(not-don e)的记录。
+				例2：['|',
+						('message_follower_ids', 'in', [user.partner_id.id]),
+						'|',
+							('user_id', '=', user.id),
+							('user_id', '=', False)
+					 ]
+					 // 第一个’|’或运算符作用于 follower 条件以及下一个条件的结果。下一个条件是后面两个条件的并集
+		
+		5.时间模块说明
+			python中：datetime模块（date.today()、timedelta() ...）
+			odoo中	：odoo.tools.date_utils模块
+				1. start_of(value, granularity)是某个特定刻度时间区间的开始时间，这些刻度有year, quarter, month, week, day或hour
+				2. end_of(value, granularity)是某个特定刻度时间区间的结束时间
+				3. add(value, **kwargs)为指定值加上一个时间间隔。**kwargs参数由一个relativedelta对象来定义时间间隔。这些参数可以是years, months, weeks, days, hours, minutes等等
+				4. subtract(value, **kwargs)为指定值减去一个时间间隔
+			用法参考例子：
+				>>> from odoo.tools import date_utils
+				>>> from datetime import datetime
+				>>> date_utils.start_of(datetime.now(), 'week')	
+				datetime.datetime(2019, 1, 7, 0, 0)
+				>>> date_utils.end_of(datetime.now(), 'week')
+				datetime.datetime(2019, 1, 13, 23, 59, 59, 999999)
+				>>> from datetime import date
+				>>> date_utils.add(date.today(), months=2)
+				datetime.date(2019, 3, 12)
+				>>> date_utils.subtract(date.today(), months=2)
+				datetime.date(2018, 11, 12)
+		
+		6.py文件在记录中写入
+			有两种写入方式：对象形式直接分配和使用write()方法
+			1.对象形式写入：
+				>>> root = self.env['res.users'].browse(1)
+				>>> print(root.name)
+				OdooBot
+				>>> root.name = 'Superuser'
+				>>> print(root.name)
+				Superuser
+			2.write()形式写入
+				>>> Partner = self.env['res.partner']
+				>>> recs = Partner.search( [('name', 'ilike', 'Azure')] )
+				>>> recs.write({'comment': 'Hello!'})
+				True
+			3.上面两种都是单例，下来我们看one-many的写法
+				1.对象形式
+					publisher.child_ids = author1 | author2
+				2.write()方式
+					book.write({'child_ids':[(6,0,[author1.id,author2.id])]})
+				注意：write()方式不能向对象形式那样直接调用对象，而要调用id
+					(4,id,_)	添加一条记录
+					(6,_,[ids])	替换关联记录列表为所传入的列表
+		
+		7.py文件创建、删除、复制
+			1.create() 
+				接收所需创建记录字段和值组成的字典，语法与write()一致	
+				>>> Partner = self.env['res.partner']
+				>>> new = Partner.create({'name': 'ACME', 'is_company': True})
+				>>> print(new)
+				res.partner(64,)
+				>>> print(new.customer) # customer标记默认为 True
+				True
+			2.unlink() 
+				方法会删除记录集中的记录，如下所示：
+				>>> rec = Partner.search([('name', '=', 'ACME')])
+				>>> rec.unlink()
+				2019-01-12 06:32:48,601 2612 INFO dev12 odoo.models.unlink: User #1 deleted mail.message records with IDs: [28]
+				2019-01-12 06:32:48,651 2612 INFO dev12 odoo.models.unlink: User #1 deleted ir.attachment records with IDs: [416, 415, 414]
+				2019-01-12 06:32:48,655 2612 INFO dev12 odoo.models.unlink: User #1 deleted res.partner records with IDs: [64]
+				2019-01-12 06:32:48,666 2612 INFO dev12 odoo.models.unlink: User #1 deleted mail.followers records with IDs: [7]
+				True
+			3.copy() 
+				用于复制已有记录
+				>>> demo = self.env.ref('base.user_demo')
+				>>> new = demo.copy({'name': 'Daniel', 'login': 'daniel', 'email': ''})
+				带有copy=False属性的字段不会被自动拷贝。to-many关联字段带有该标记时默认被禁用，因此也不可拷贝。	
+			
+		8.py文件查询数据集
+			1.search()方法
+				域表达式过滤（表达式规则见4），空search返回所有记录集：
+				>>> self.env['res.partner'].search([('name', 'like', 'Pac')])
+				res.partner(42, 62)
+			2.search_count()方法
+				直接返回数据集条数
+			3.browse()方法
+				接收id列表查询：
+				>>> self.env['res.partner'].browse([42, 62])
+				res.partner(42, 62)
+		
+		9.记录集的相关函数
+			1. x (not) in my_recordset		// 单例x是否在记录集my_recordset中
+			2. recordset.ids				// 返回记录集id列表
+			3. recordset.ensure_one()		// 检查是否是单例（数据集记录只有一条），若不是则抛出ValueError异常
+			4. recordset.filtered(func)		// 返回一个过滤了的记录集，func可以是一个函数或一个点号分隔的表达式来表示字段路径
+			5. recordset。mapped(func)		// 返回一个映射值列表。除函数外，还可使用文本字符串作为映射的字段名。
+			6. recordset.sorted(func)		// 返回一个排好序的记录值。除函数外，文本字符串可用作排序的字段名。reverse=True是其可选参数。
+			例子：
+				>>> rs0 = self.env['res.partner'].search([])
+				>>> len(rs0)
+				48
+				>>> starts_A = lambda r: r.name.startswith('A')
+				>>> rs1 = rs0.filtered(starts_A)
+				>>> print(rs1)
+				res.partner(63, 59, 14, 35)
+				>>> rs1.sorted(key=lambda r: r.id, reverse=True)
+				res.partner(63, 59, 35, 14)
+				>>> rs2 = rs1.filtered('is_company')
+				>>> print(rs2)
+				res.partner(14,)
+				>>> rs2.mapped('name')
+				['Azure Interior']
+				>>> rs2.mapped(lambda r: (r.id, r.name))
+				[(14, 'Azure Interior')]
+		
+		10.记录集运算
+			1. rs1 | rs2	是一个集合的并运算，会生成一个包含两个记录集所有元素的记录集
+			2. rs1 + rs2	是集合加法运算，会将两个记录集拼接为一个记录集，这可能会带来集合中有重复记录
+			3. rs1 & rs2	是集合的交集运算，会生成一个仅在两个记录集中同时出现元素组成的数据集
+			4. rs1 – rs2	是集合的差集运算，会生成在rs1中有但rs2中没有的元素组成的数据集
+			5. rs[0]		返回第一个元素
+			6. rs[-1]		返回最后一个元素
+			7. rs[1:]		返回除第一个元素外的记录集拷贝
+			
+			8. self.author_ids |= author1				如果不存在author1，它会将author1加入记录集
+			9. self.author_ids -= author1				如果author1存在于记录集中，会进行删除
+			10.self.author_ids = self.author_ids[:-1]	删除最后一条记录
+			
+		11.数据库底层操作
+			1. self.env.cr.commit()		执行事务缓冲的写运算
+			2. self.env.cr.rollback()	取消上次commit之后的写运算，如果尚未commit，则回滚所有操作n
+			
+	(3)controller文件函数说明
+		1. book = self.env['library.book']	
+			获取library.book模块类，其中library.book是模块名
+		2. books = book.search([])
+		3. 路由函数
+			    @http.route('/library/books', auth='user')
+				def list(self, **kwargs):
+					Book = http.request.env['library.book']
+					books = Book.search([])
+					return http.request.render(
+						'library_app.book_list_template', {'books': books}
+					)
+			library_app.book_list_template是template文件id，前端展示模板文件，books是传入数据
+
+3、xml文件字段说明
+	(1) 菜单文件
+		1. <menuitem id="menu_library" name="Library" />
+			定义顶级菜单和子菜单
+			子菜单需要带parent属性
+		2. <act_window>
+			定义客户端窗口操作，它按顺序通过启用列表和表单视图打开library.book 模型
+	(2) 权限文件
+		1. <data noupdate="1">	
+			noupdate=1时，安装时会创建，更新时不会被重写。
+		2. 
+	(3)	视图层
+		<act_window id="action_library_book"
+			name="Library Books"
+			res_model="library.book"
+			view_mode="tree,form"
+		/>
+		<!-- Menu item to open the Book list -->
+		<menuitem id="menu_library_book"
+			name="Books"
+			parent="menu_library"
+			action="action_library_book"
+		/>
+	(4)	具体字段说明
+		1. <header>	页面头部
+		2. <sheep>	页面数据展示
+		3. <group>	组
+				name	可设为group_top、group_left、gourp_right等来组织表单
+		4. <form>	表单视图
+		   <tree>	列表（树）视图
+		   <search>	搜索视图
+		5. <field>	字段
+				domain="[('active','=',True)]"	域条件
+				
+		6. <button name="button_check_isbn" type="object" string="Check ISBN" />		按钮
+				string	定义按钮显示文本
+				type	执行的操作类型
+				name	操作的标识符
+		class	应用 CSS 样式的可选属性，与 HTML 相同
+	(5) template.xml前端模板文件
+		    <template id="book_list_template" name="Book List">		// template的id在用来在controller中引入template文件
+				<div id="wrap" class="container">					// xxx 未知
+					<h1>Books</h1>
+					<t t-foreach="books" t-as="book">				// 循环行
+						<div class="row">							// 每行用div展示
+							<span t-field="book.name" />
+							<span t-field="book.date_published" />
+							<span t-field="book.publisher_id" />
+						</div>
+					</t>
+				</div>
+			</template>
+
+4、csv文件字段说明 
+	例子：
+		id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+		access_book_user,BookUser,model_library_book,library_group_user,1,0,0,0
+		access_book_manager,BookManager,model_library_book,library_group_manager,1,1,1,1
+	说明：
+		第一行是key，下面两行是value
+	id			记录的外部标识符（也称为XML ID），需在模块中唯一
+	name		描述性标题，仅在保证唯一时提供有用信息
+	model_id	是赋权模型的外部标识符，模型有ORM自动生成的XML ID，对于library.book，标识符为model_library_book
+	group_id	指明授权的安全组，我们给前文创建的安全组授权：library_group_user和library_group_manager
+	perm_…		字段标记read读, write写, create创建, 或unlink删除权限

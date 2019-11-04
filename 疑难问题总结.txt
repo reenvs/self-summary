@@ -1,0 +1,16 @@
+一、系统类
+
+1. wsl子系统初次使用大保健？
+解决：https://www.jianshu.com/p/edfc1dab27a5
+
+2. 出现错误： E: Unable to locate package openssh-server
+解决：apt-update
+
+3. wsl子系统装软件出现各种缺少依赖？
+解决：更换ubuntu阿里源，执行apt update 和 apt upgrade 
+
+4. 使用pycharm远程映射linux机器代码？
+	1. tools -> Deployment -> Configuration
+	2. 新建sftp，填入虚拟机账号信息，test sftp链接看是否正常
+	3. mapping映射，填写虚拟机代码路径和本地路径
+	4. tools -> Deployment - > download from 虚拟机 / update to 虚拟机 。。。可以愉快的玩耍了
