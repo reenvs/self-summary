@@ -1,0 +1,31 @@
+大体同canvas
+
+一、相关接口
+  1. 获取商品列表接口，同canvas
+  2. 下单接口
+      GetInstantOrder()，和canvas接口不同，可能因为传参不同，做的事一样
+  3. 验单接口（相比canvas新增）
+      VerifyInstantOrder()
+      前端去facebook轮询刷单，刷成功后调用后端验单接口，后端改订单支付状态，而后前端调用确认订单
+  4. 确认订单接口，同canvas
+      CanvasProductConfirm()
+        发奖励，更新支付成功的相关内容（比如用户支付次数，支付总额...）
+  
+  5. facebook回调接口
+    1.获取商品信息（主要是价格）
+      GetProductInfo()
+
+    和canvas比没用到的接口
+      1.刷单接口（无该接口）
+      2.回调后端接口，通知支付成功信息
+        PayCanvasCall()
+
+二、流程
+  1. 正常流程
+      1. 前端调用后端下单接口，后端返回订单详情信息
+      2. 前端调用facebook接口，拉起facebook支付；同时去facebook刷单
+      3. facebook instant会不会拉商品信息不确认，好像是直接配在facebook应用里的
+          --- 如果需要 --- facebook调用后端 GetProductInfo接口，拉取商品准确价格、图标等信息，展示付款界面（）
+      4. facebook收到玩家付款后，前端再次调用facebook接口刷单即可刷到成功订单
+      5. 前端调用后端验单接口VerifyInstantOrder，后端开始修改订单状态
+      6. 前端调用确认订单接口，获取奖励
