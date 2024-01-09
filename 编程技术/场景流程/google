@@ -1,0 +1,4 @@
+大概流程
+
+1. 商品信息直接配在google提供的页面，google存起来，就不要每次下单拉取
+2. 去google拉取订单后，google给一个token，用这个token去google轮询支付成功信息
