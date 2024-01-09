@@ -1,0 +1,11 @@
+问题1. go mod tidy 报错：zip: not a valid zip file
+  解决：
+    1. 清理缓存：
+        go clean -modcache
+        go mod tidy
+    2. 手动清理缓存：
+        rm -rf $GOPATH/pkg/mod/cache/download/<module>
+    3. 设置代理
+      1. 绕过代理：export GOPROXY=direct
+      2. 设置代理（网络环境通畅）：export GOPROXY=https://proxy.golang.org  【我用此方法fix的】
+      3. 设置代理（网络环境受限）：export GOPROXY=https://goproxy.io
