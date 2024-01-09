@@ -1,0 +1,147 @@
+一、准备工作
+  1. 图片存储服务器
+  2. 语言（go语言为例）
+
+二、流程
+  1. 图片服务器（简单的web开发）
+    1. 图片上传接口
+        1. 	authGroup.StaticFS("/download", http.Dir(conf.C.StoreDir))
+    2. 图片查看接口
+        	authGroup.StaticFS("/download", http.Dir(conf.C.StoreDir))
+    3. 图片存储路径（可以在当前路径下，指定路径可配置管理）
+
+  2. 如果游戏web服务想接入图片服务
+    1. 开发一个post接口
+        1. 传参是：
+            1. 用户id
+            2. 图片内容（本来是0101的计算机码，前端用base64加密后，在body中传入到后端）
+        2. 后端拿到请求后
+            1. base64解密得到图片二进制信息
+            2. 调用图片服务器的图片上传接口，图片服务器会生成图片名（完整图片路径），返回给后端
+            3. 后端保存图片路径
+
+三、code
+
+// 入口函数
+func main() {
+	config := flag.String("config", "", "config.yaml")
+	flag.Parse()
+
+	if err := conf.MustInit(*config); err != nil {
+		panic(err)
+	}
+
+	xlog.Init(conf.C.LogPatch, conf.C.LogLevel, conf.C.EnableConsole)
+
+	util.SetEnv(conf.C.Env)
+
+	util.SetDefaultTimezone(conf.C.Timezone)
+
+	engine := gin.Default()
+	pprof.Register(engine)
+	engine.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "fpid", "secret"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}), middleware.VerifyHeader())
+
+	engine.Use(requestid.New())
+	apiGroup := engine.Group("api")
+	router.RegisterHandler(apiGroup)
+
+	//authGroup := engine.Group("auth", gin.BasicAuth(gin.Accounts{
+	//	"xian_dd_jackpot": "sdffTYUTJHY!@#!$", //用户名：密码
+	//}))
+
+	authGroup := engine.Group("auth")
+	authGroup.StaticFS("/download", http.Dir(conf.C.StoreDir))
+
+	xlog.L.Debug("main", zap.String("start", "ok"))
+
+	if err := engine.Run(fmt.Sprintf(":%d", conf.C.HttpPort)); err != nil {
+		xlog.L.Error("error", zap.Error(err))
+	}
+}
+
+// 上传路由
+func RegisterHandler(api *gin.RouterGroup) {
+	api.POST("/upload", uploadHandler)
+}
+
+// 上传handle
+func uploadHandler(c *gin.Context) {
+	var param UploadHeader
+	err := c.ShouldBindHeader(&param)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": xerror.ErrCodeHack, "msg": "param is error", "data": gin.H{}})
+		return
+	}
+
+	if err = param.Verify(); err != nil {
+		var newErr *xerror.Error
+		if errors.As(err, &newErr) {
+			c.JSON(http.StatusOK, gin.H{"code": newErr.Code(), "msg": newErr.Error(), "data": gin.H{}})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": xerror.ErrCodeHack, "msg": err.Error(), "data": gin.H{}})
+		}
+		return
+	}
+
+	// 获取上传文件的类型
+	//if c.Request.Header.Get("Content-Type") != "application/jpeg" ||
+	//	c.Request.Header.Get("Content-Type") != "application/jpg" {
+	//	c.JSON(http.StatusOK, gin.H{"code": util.ErrCodeHack, "msg": "error", "data": gin.H{}})
+	//	return
+	//}
+
+	var body []byte
+	body, err = ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": xerror.ErrCodeHack, "msg": err.Error(), "data": gin.H{}})
+		return
+	}
+	defer c.Request.Body.Close()
+
+	// 单文件
+	//var file *multipart.FileHeader
+	//file, err = c.FormFile("file")
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+
+	//storeDir := fmt.Sprintf("%s/%s", conf.C.StoreDir, param.FPid)
+	//if !util.PathExists(storeDir) {
+	//	util.CreateDir(storeDir)
+	//}
+	//
+	//// 上传文件到指定的路径
+	//dstName := fmt.Sprintf("%s/%s", storeDir, fmt.Sprintf("%s_%s", param.FPid, time.Now().Format("20060102150405.000000")))
+	////err = c.SaveUploadedFile(file, dstName)
+
+	now := util.Carbon().Now()
+	storePath := path.Join(conf.C.StoreDir, now.StartOfDay().ToDateString())
+	if !util.PathExists(storePath) {
+		util.CreateDir(storePath)
+	}
+
+	dstName := path.Join(storePath, fmt.Sprintf("%s-%s", param.FPid, now.Format("YmdHis.u")))
+
+	var out *os.File
+	out, err = os.Create(dstName)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": xerror.ErrCodeHack, "msg": err.Error(), "data": gin.H{}})
+		return
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, bytes.NewReader(body))
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": xerror.ErrCodeHack, "msg": err.Error(), "data": gin.H{}})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "success", "data": gin.H{}})
+}
