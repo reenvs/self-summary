@@ -35,7 +35,7 @@
 二、流程
   1. 正常流程
       1. 前端调用后端下单接口，后端返回订单详情信息
-      2. 前端调用facebook接口，拉起facebook支付；同时开始刷单
+      2. 前端调用facebook接口，拉起facebook支付；同时调用后端CanvasProductRefresh接口，开始刷单
       3. facebook调用后端 GetProductInfo接口，拉取商品准确价格、图标等信息，展示付款界面
       4. facebook收到玩家付款后，调用后端 PayCanvasCall接口，通知后端已支付成功
       5. 后端校验facebook确认支付结果后，开始修改订单状态
